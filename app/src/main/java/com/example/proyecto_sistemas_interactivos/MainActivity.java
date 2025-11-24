@@ -5,74 +5,68 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText edtCorreo, edtContrasena, edtConfirmar;
-    private Button btnCrearCuenta, btnIniciarSesion;
+    private EditText edtCorreo, edtContrasena, edtConfirmarContrasena;
+    private Button btnCrearCuenta, btnIrALogin;
+
+    // Constantes de prefs de usuario
+    private static final String PREFS_USER = "user_prefs";
+    private static final String KEY_EMAIL = "email";
+    private static final String KEY_PASSWORD = "password";
+    private static final String KEY_IS_LOGGED_IN = "is_logged_in";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main); // pantalla CREAR CUENTA
+        setContentView(R.layout.activity_main);
 
         edtCorreo = findViewById(R.id.edtCorreo);
         edtContrasena = findViewById(R.id.edtContrasena);
-        edtConfirmar = findViewById(R.id.edtConfirmarContrasena);
+        edtConfirmarContrasena = findViewById(R.id.edtConfirmarContrasena);
         btnCrearCuenta = findViewById(R.id.btnCrearCuenta);
-        btnIniciarSesion = findViewById(R.id.btnIrALogin);
+        btnIrALogin = findViewById(R.id.btnIrALogin);
 
+        btnCrearCuenta.setOnClickListener(v -> {
+            String email = edtCorreo.getText().toString().trim();
+            String password = edtContrasena.getText().toString().trim();
+            String password2 = edtConfirmarContrasena.getText().toString().trim();
 
-        btnCrearCuenta.setOnClickListener(v -> crearCuenta());
+            if (email.isEmpty()) {
+                edtCorreo.setError("Ingresa un correo");
+                return;
+            }
+            if (password.isEmpty()) {
+                edtContrasena.setError("Ingresa una contraseña");
+                return;
+            }
+            if (!password.equals(password2)) {
+                edtConfirmarContrasena.setError("Las contraseñas no coinciden");
+                return;
+            }
 
-        // Ir a pantalla de inicio de sesión
-        btnIniciarSesion.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
+            SharedPreferences prefs = getSharedPreferences(PREFS_USER, MODE_PRIVATE);
+            prefs.edit()
+                    .putString(KEY_EMAIL, email)
+                    .putString(KEY_PASSWORD, password)
+                    .putBoolean(KEY_IS_LOGGED_IN, true)
+                    .apply();
+
+            Toast.makeText(this, "Cuenta creada", Toast.LENGTH_SHORT).show();
+
+            Intent i = new Intent(MainActivity.this, HomeActivity.class);
+            startActivity(i);
+            finish();
         });
-    }
 
-    private void crearCuenta() {
-        String correo = edtCorreo.getText().toString().trim();
-        String pass = edtContrasena.getText().toString().trim();
-        String pass2 = edtConfirmar.getText().toString().trim();
-
-        if (correo.isEmpty() || pass.isEmpty() || pass2.isEmpty()) {
-            Toast.makeText(this, "Llena todos los campos", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (!Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
-            Toast.makeText(this, "Correo inválido", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (!pass.equals(pass2)) {
-            Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (pass.length() < 6) {
-            Toast.makeText(this, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Guardar usuario en SharedPreferences (solo para demo)
-        SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
-        prefs.edit()
-                .putString("user_email", correo)
-                .putString("user_password", pass)
-                .apply();
-
-        Toast.makeText(this, "Cuenta creada. Ahora inicia sesión.", Toast.LENGTH_LONG).show();
-
-        // Ir a Login y cerrar esta pantalla
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(intent);
-        finish();
+        btnIrALogin.setOnClickListener(v -> {
+            Intent i = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(i);
+            finish();
+        });
     }
 }
