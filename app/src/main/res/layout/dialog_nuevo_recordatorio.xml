@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <EditText
+            android:id="@+id/edtTituloRecordatorio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre de la actividad"
+            android:background="@drawable/bg_edittext"
+            android:padding="8dp"
+            android:textColor="@color/colorTexto"
+            android:textColorHint="@color/colorBordeBoton" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fecha"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/colorTexto" />
+
+        <Button
+            android:id="@+id/btnElegirFecha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Seleccionar fecha"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/txtFechaSeleccionada"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hoy"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/colorBordeBoton" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hora"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/colorTexto" />
+
+        <Button
+            android:id="@+id/btnElegirHora"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Seleccionar hora"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/txtHoraSeleccionada"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ahora"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/colorBordeBoton" />
+
+    </LinearLayout>
+</ScrollView>

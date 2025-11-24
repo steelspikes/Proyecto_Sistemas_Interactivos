@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="@color/colorFondo"
+    tools:context=".AddReminderActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtTituloPantalla"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nuevo recordatorio"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorTexto"
+            android:layout_marginBottom="16dp" />
+
+        <EditText
+            android:id="@+id/edtTituloRecordatorio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre de la actividad"
+            android:background="@drawable/bg_edittext"
+            android:padding="12dp"
+            android:textColor="@color/colorTexto"
+            android:textColorHint="@color/colorBordeBoton"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fecha"
+            android:textColor="@color/colorTexto"
+            android:layout_marginBottom="8dp" />
+
+        <DatePicker
+            android:id="@+id/datePickerRecordatorio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hora"
+            android:textColor="@color/colorTexto"
+            android:layout_marginBottom="8dp" />
+
+        <TimePicker
+            android:id="@+id/timePickerRecordatorio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp" />
+
+        <Button
+            android:id="@+id/btnGuardarRecordatorio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="GUARDAR"
+            android:background="@drawable/btn_primary"
+            android:backgroundTint="@null"
+            android:textColor="@color/colorTextoBoton" />
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorFondo"
+    tools:context=".HomeActivity">
+
+    <!-- Barra superior -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:background="@color/colorPrimario"
+        android:gravity="center_vertical|end"
+        android:paddingEnd="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/profileIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:text="👤"
+            android:textSize="18sp"
+            android:background="@android:color/white"
+            android:textColor="@android:color/black"
+            android:padding="4dp" />
+    </LinearLayout>
+
+    <!-- Barra navegación secundaria -->
+    <LinearLayout
+        android:id="@+id/secondBar"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:background="#E5E5E5"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Icono Home como texto -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="🏠"
+            android:textSize="22sp"
+            android:gravity="start|center_vertical" />
+
+        <!-- “Calendario” como texto (puedes poner emoji o palabra) -->
+        <TextView
+            android:id="@+id/btnIrCalendario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📅"
+            android:textSize="22sp"
+            android:gravity="end|center_vertical" />
+    </LinearLayout>
+
+
+    <!-- Contenido scrollable -->
+    <ScrollView
+        android:id="@+id/scrollContent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/secondBar"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Título -->
+            <TextView
+                android:id="@+id/txtPlanHoy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="Plan para hoy"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorTexto" />
+
+            <!-- Botón Agregar recordatorio -->
+            <Button
+                android:id="@+id/btnAgregarRecordatorio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:background="@drawable/btn_primary"
+                android:backgroundTint="@null"
+                android:text="Agregar recordatorio"
+                android:textAllCaps="false"
+                android:textColor="@color/colorTextoBoton" />
+
+            <!-- Días de la semana -->
+            <LinearLayout
+                android:id="@+id/layoutDiasSemana"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtDiaDomingo"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:gravity="center"
+                    android:text="D"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:background="@drawable/circle_day"
+                    android:layout_margin="4dp" />
+
+                <TextView
+                    android:id="@+id/txtDiaLunes"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:gravity="center"
+                    android:text="L"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:background="@drawable/circle_day"
+                    android:layout_margin="4dp" />
+
+                <TextView
+                    android:id="@+id/txtDiaMartes"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:gravity="center"
+                    android:text="M"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:background="@drawable/circle_day"
+                    android:layout_margin="4dp" />
+
+                <TextView
+                    android:id="@+id/txtDiaMiercoles"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:gravity="center"
+                    android:text="M"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:background="@drawable/circle_day"
+                    android:layout_margin="4dp" />
+
+                <TextView
+                    android:id="@+id/txtDiaJueves"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:gravity="center"
+                    android:text="J"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:background="@drawable/circle_day"
+                    android:layout_margin="4dp" />
+
+                <TextView
+                    android:id="@+id/txtDiaViernes"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:gravity="center"
+                    android:text="V"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:background="@drawable/circle_day"
+                    android:layout_margin="4dp" />
+
+                <TextView
+                    android:id="@+id/txtDiaSabado"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:gravity="center"
+                    android:text="S"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:background="@drawable/circle_day"
+                    android:layout_margin="4dp" />
+            </LinearLayout>
+
+            <!-- Mensaje cuando no hay recordatorios -->
+            <TextView
+                android:id="@+id/txtSinRecordatorios"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:text="No hay recordatorios para hoy"
+                android:textColor="@color/colorTexto"
+                android:visibility="gone" />
+
+            <!-- Contenedor dinámico de recordatorios -->
+            <LinearLayout
+                android:id="@+id/contenedorRecordatorios"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="vertical" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Barra inferior -->
+    <LinearLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="#3E4A52"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical|start"
+            android:text="☷"
+            android:textSize="24sp"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="+"
+            android:textSize="24sp"
+            android:textColor="@android:color/black"
+            android:background="@android:color/white" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Estilo genérico para cada día del calendario -->
+    <style name="CalendarDay">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/colorTexto</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_margin">2dp</item>
+    </style>
+
+</resources>

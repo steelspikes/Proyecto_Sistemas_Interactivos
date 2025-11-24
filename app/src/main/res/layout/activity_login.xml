@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorFondo"
+    tools:context=".LoginActivity">
+
+    <!-- CONTENEDOR SUPERIOR (BANNER) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerContainerLogin"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintDimensionRatio="3:2">
+
+        <!-- Imagen de fondo (fondo.png) -->
+        <ImageView
+            android:id="@+id/headerImageLogin"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/fondo"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Texto BIENVENIDO DE VUELTA -->
+        <TextView
+            android:id="@+id/txtTituloLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BIENVENIDO\nDE VUELTA"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="40dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- CONTENEDOR FORMULARIO -->
+    <LinearLayout
+        android:id="@+id/formContainerLogin"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        app:layout_constraintTop_toBottomOf="@id/headerContainerLogin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Correo -->
+        <EditText
+            android:id="@+id/edtCorreoLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_edittext"
+            android:hint="Correo"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/colorTexto"
+            android:textColorHint="@color/colorBordeBoton" />
+
+        <!-- Contraseña -->
+        <EditText
+            android:id="@+id/edtContrasenaLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_edittext"
+            android:hint="Contraseña"
+            android:inputType="textPassword"
+            android:textColor="@color/colorTexto"
+            android:textColorHint="@color/colorBordeBoton" />
+
+        <!-- Botón INICIAR SESION (azul) -->
+        <Button
+            android:id="@+id/btnIniciarSesionLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/btn_primary"
+            android:backgroundTint="@null"
+            android:text="INICIAR SESION"
+            android:textAllCaps="true"
+            android:textColor="@color/colorTextoBoton" />
+
+
+        <!-- Separador con línea - círculo - línea -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:background="@color/colorBordeBoton" />
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/circle_separator" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:background="@color/colorBordeBoton" />
+        </LinearLayout>
+
+        <!-- Botón CREAR CUENTA (blanco con borde) -->
+        <Button
+            android:id="@+id/btnIrARegistro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/btn_secondary"
+            android:backgroundTint="@null"
+            android:text="CREAR CUENTA"
+            android:textAllCaps="true"
+            android:textColor="@color/colorTexto" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,16 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.Proyecto_Sistemas_Interactivos"
+        parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <item name="colorPrimary">@color/colorPrimario</item>
+        <item name="colorPrimaryVariant">@color/colorPrimario</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="colorSecondary">@color/colorPrimario</item>
+        <item name="colorSecondaryVariant">@color/colorPrimario</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <item name="android:statusBarColor">@color/colorPrimario</item>
+        <item name="android:navigationBarColor">@color/colorPrimario</item>
+    </style>
+</resources>

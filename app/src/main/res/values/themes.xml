@@ -1,0 +1,37 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Proyecto_Sistemas_Interactivos"
+        parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <!-- Colores principales de TU app -->
+        <item name="colorPrimary">@color/colorPrimario</item>
+        <item name="colorPrimaryVariant">@color/colorPrimario</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Colores secundarios (puedes usar el mismo) -->
+        <item name="colorSecondary">@color/colorPrimario</item>
+        <item name="colorSecondaryVariant">@color/colorPrimario</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Barra de estado y navegación -->
+        <item name="android:statusBarColor">@color/colorPrimario</item>
+        <item name="android:navigationBarColor">@color/colorPrimario</item>
+
+
+
+
+    </style>
+
+
+    <style name="MonthButton">
+        <item name="android:layout_width">96dp</item>
+        <item name="android:layout_height">96dp</item>
+        <item name="android:background">@drawable/circle_day</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+
+</resources>
