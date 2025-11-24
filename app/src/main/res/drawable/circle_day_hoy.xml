@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- Tamaño del círculo (ajusta si lo quieres más grande) -->
+    <size
+        android:width="40dp"
+        android:height="40dp" />
+
+    <!-- Color rosa para el día actual -->
+    <solid android:color="#FFB3C7" />
+
+</shape>

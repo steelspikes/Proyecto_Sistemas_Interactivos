@@ -32,7 +32,7 @@ public class HomeActivity extends AppCompatActivity {
             txtDiaMiercoles, txtDiaJueves, txtDiaViernes, txtDiaSabado;
 
     // Lista de recordatorios (se mantiene en memoria mientras la app esté abierta)
-    private static final List<Recordatorio> LISTA_RECORDATORIOS = new ArrayList<>();
+    static final List<Recordatorio> LISTA_RECORDATORIOS = new ArrayList<>();
 
     // Para el diálogo de nuevo recordatorio
     private final Calendar fechaHoraSeleccionada = Calendar.getInstance();
@@ -59,11 +59,13 @@ public class HomeActivity extends AppCompatActivity {
         txtDiaViernes = findViewById(R.id.txtDiaViernes);
         txtDiaSabado = findViewById(R.id.txtDiaSabado);
 
+        // Marca el día actual (círculo rosa)
         marcarDiaActual();
 
+        // Botón "Agregar recordatorio"
         btnAgregarRecordatorio.setOnClickListener(v -> mostrarDialogoNuevoRecordatorio());
 
-        // Pinta los recordatorios que ya existan (por ejemplo si ya habías abierto antes)
+        // Pinta los recordatorios que ya existan
         actualizarListaRecordatorios();
     }
 
@@ -227,9 +229,28 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     // ---------------------------------------------------------------------
+    //  MÉTODO QUE USA CalendarActivity PARA SABER SI UN DÍA TIENE EVENTO
+    // ---------------------------------------------------------------------
+    public static boolean tieneRecordatorio(int year, int month, int dayOfMonth) {
+        for (Recordatorio r : LISTA_RECORDATORIOS) {
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(r.fechaHoraMillis);
+
+            int y = c.get(Calendar.YEAR);
+            int m = c.get(Calendar.MONTH);           // Ojo: 0 = enero
+            int d = c.get(Calendar.DAY_OF_MONTH);
+
+            if (y == year && m == month && d == dayOfMonth) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // ---------------------------------------------------------------------
     //  MODELO DE DATOS
     // ---------------------------------------------------------------------
-    private static class Recordatorio {
+    static class Recordatorio {
         String titulo;
         long fechaHoraMillis;
 

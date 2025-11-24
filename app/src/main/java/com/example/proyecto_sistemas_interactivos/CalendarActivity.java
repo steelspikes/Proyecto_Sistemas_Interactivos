@@ -162,11 +162,16 @@ public class CalendarActivity extends AppCompatActivity {
             tv.setPadding(0, 16, 0, 16);
 
             int diaNumero = i - offset + 1;
+
             if (diaNumero >= 1 && diaNumero <= diasEnMes) {
                 tv.setText(String.valueOf(diaNumero));
 
-                boolean tieneRec = HomeActivity.tieneRecordatorio(year, month, day);
-
+                // 👇 AQUÍ ESTABA EL ERROR: usamos las variables correctas
+                boolean tieneRec = HomeActivity.tieneRecordatorio(
+                        anioActual,
+                        mesSeleccionado,
+                        diaNumero
+                );
 
                 if (tieneRec) {
                     tv.setBackgroundResource(R.drawable.cell_day_active);
