@@ -1,49 +1,49 @@
 package com.example.proyecto_sistemas_interactivos;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.EditText;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
 
-    // --- Constantes para prefs de recordatorios ---
-    private static final String PREFS_RECORDATORIOS = "recordatorios_prefs";
-    private static final String KEY_RECORDATORIOS = "lista_recordatorios";
+    // --- Claves para SharedPreferences ---
+    private static final String PREFS_NAME = "prefs_app";
+    private static final String KEY_RECORDATORIOS = "recordatorios";
+
+    // --- Lista estática que usan HomeActivity y CalendarActivity ---
+    static final List<Recordatorio> LISTA_RECORDATORIOS = new ArrayList<>();
 
     // --- UI principal ---
     private Button btnAgregarRecordatorio;
     private LinearLayout contenedorRecordatorios;
     private TextView txtSinRecordatorios;
 
-    // Botón de calendario (el texto 📅 de la barra gris)
-    private TextView btnIrCalendario;
-
     // Días de la semana
     private TextView txtDiaDomingo, txtDiaLunes, txtDiaMartes,
             txtDiaMiercoles, txtDiaJueves, txtDiaViernes, txtDiaSabado;
-
-    // Lista de recordatorios (ahora se guarda y se carga de SharedPreferences)
-    private static final List<Recordatorio> LISTA_RECORDATORIOS = new ArrayList<>();
 
     // Para el diálogo de nuevo recordatorio
     private final Calendar fechaHoraSeleccionada = Calendar.getInstance();
@@ -56,6 +56,13 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        // Ir al calendario desde la barra gris
+        TextView btnIrCalendario = findViewById(R.id.btnIrCalendario);
+        btnIrCalendario.setOnClickListener(v -> {
+            Intent i = new Intent(HomeActivity.this, CalendarActivity.class);
+            startActivity(i);
+        });
 
         // Referencias UI
         btnAgregarRecordatorio = findViewById(R.id.btnAgregarRecordatorio);
@@ -70,21 +77,16 @@ public class HomeActivity extends AppCompatActivity {
         txtDiaViernes = findViewById(R.id.txtDiaViernes);
         txtDiaSabado = findViewById(R.id.txtDiaSabado);
 
-        // 📅 Botón de calendario en la barra gris
-        btnIrCalendario = findViewById(R.id.btnIrCalendario);
-        btnIrCalendario.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeActivity.this, CalendarActivity.class);
-            startActivity(intent);
-        });
-
-        marcarDiaActual();
-
-        btnAgregarRecordatorio.setOnClickListener(v -> mostrarDialogoNuevoRecordatorio());
-
-        // Cargar recordatorios guardados anteriormente
+        // Cargar recordatorios guardados
         cargarRecordatoriosDesdePrefs();
 
-        // Pintar lista para hoy
+        // Marcar el día actual en rosa
+        marcarDiaActual();
+
+        // Botón para crear nuevo recordatorio
+        btnAgregarRecordatorio.setOnClickListener(v -> mostrarDialogoNuevoRecordatorio());
+
+        // Mostrar recordatorios de hoy
         actualizarListaRecordatorios();
     }
 
@@ -125,7 +127,7 @@ public class HomeActivity extends AppCompatActivity {
         View view = inflater.inflate(R.layout.dialog_nuevo_recordatorio, null);
         builder.setView(view);
 
-        EditText edtTitulo = view.findViewById(R.id.edtTituloRecordatorio);
+        TextView edtTitulo = view.findViewById(R.id.edtTituloRecordatorio);
         TextView txtFechaSel = view.findViewById(R.id.txtFechaSeleccionada);
         TextView txtHoraSel = view.findViewById(R.id.txtHoraSeleccionada);
         Button btnElegirFecha = view.findViewById(R.id.btnElegirFecha);
@@ -190,13 +192,10 @@ public class HomeActivity extends AppCompatActivity {
                 // Guardar en SharedPreferences
                 guardarRecordatoriosEnPrefs();
 
+                // Actualizar la lista en pantalla (ya ordenada)
                 actualizarListaRecordatorios();
 
-                Toast.makeText(
-                        HomeActivity.this,
-                        "Recordatorio guardado: " + titulo,
-                        Toast.LENGTH_SHORT
-                ).show();
+                // Ya NO mostramos el Toast aquí (se quitó el mensaje de abajo)
 
                 dialog.dismiss();
             });
@@ -206,30 +205,42 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     // ---------------------------------------------------------------------
-    //  LISTA DINÁMICA DE RECORDATORIOS (SOLO HOY)
+    //  LISTA DINÁMICA DE RECORDATORIOS (SOLO HOY, ORDENADOS POR HORA)
     // ---------------------------------------------------------------------
     private void actualizarListaRecordatorios() {
         contenedorRecordatorios.removeAllViews();
 
         long hoy = System.currentTimeMillis();
-        boolean hayRecordatoriosHoy = false;
 
-        LayoutInflater inflater = LayoutInflater.from(this);
-
+        // Primero filtramos sólo los recordatorios de hoy
+        List<Recordatorio> deHoy = new ArrayList<>();
         for (Recordatorio r : LISTA_RECORDATORIOS) {
             if (esMismoDia(hoy, r.fechaHoraMillis)) {
-                hayRecordatoriosHoy = true;
-
-                View card = inflater.inflate(R.layout.item_recordatorio, contenedorRecordatorios, false);
-
-                TextView txtTitulo = card.findViewById(R.id.txtTituloRecordatorio);
-                TextView txtHora = card.findViewById(R.id.txtHoraRecordatorio);
-
-                txtTitulo.setText(r.titulo);
-                txtHora.setText(formatoHora.format(r.getDate()));
-
-                contenedorRecordatorios.addView(card);
+                deHoy.add(r);
             }
+        }
+
+        // Ordenamos por hora (de más temprano a más tarde)
+        Collections.sort(deHoy, new Comparator<Recordatorio>() {
+            @Override
+            public int compare(Recordatorio r1, Recordatorio r2) {
+                return Long.compare(r1.fechaHoraMillis, r2.fechaHoraMillis);
+            }
+        });
+
+        boolean hayRecordatoriosHoy = !deHoy.isEmpty();
+        LayoutInflater inflater = LayoutInflater.from(this);
+
+        for (Recordatorio r : deHoy) {
+            View card = inflater.inflate(R.layout.item_recordatorio, contenedorRecordatorios, false);
+
+            TextView txtTitulo = card.findViewById(R.id.txtTituloRecordatorio);
+            TextView txtHora = card.findViewById(R.id.txtHoraRecordatorio);
+
+            txtTitulo.setText(r.titulo);
+            txtHora.setText(formatoHora.format(r.getDate()));
+
+            contenedorRecordatorios.addView(card);
         }
 
         if (hayRecordatoriosHoy) {
@@ -251,55 +262,56 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     // ---------------------------------------------------------------------
-    //  PERSISTENCIA: GUARDAR / CARGAR LISTA
+    //  PERSISTENCIA EN SharedPreferences
     // ---------------------------------------------------------------------
-    private void guardarRecordatoriosEnPrefs() {
-        try {
-            JSONArray arr = new JSONArray();
-            for (Recordatorio r : LISTA_RECORDATORIOS) {
-                JSONObject obj = new JSONObject();
-                obj.put("titulo", r.titulo);
-                obj.put("fechaHora", r.fechaHoraMillis);
-                arr.put(obj);
-            }
-
-            getSharedPreferences(PREFS_RECORDATORIOS, MODE_PRIVATE)
-                    .edit()
-                    .putString(KEY_RECORDATORIOS, arr.toString())
-                    .apply();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void cargarRecordatoriosDesdePrefs() {
         LISTA_RECORDATORIOS.clear();
-        String json = getSharedPreferences(PREFS_RECORDATORIOS, MODE_PRIVATE)
-                .getString(KEY_RECORDATORIOS, null);
 
-        if (json == null) return;
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String json = prefs.getString(KEY_RECORDATORIOS, null);
+        if (json == null || json.isEmpty()) return;
 
         try {
             JSONArray arr = new JSONArray(json);
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject obj = arr.getJSONObject(i);
                 String titulo = obj.getString("titulo");
-                long fechaHora = obj.getLong("fechaHora");
-                LISTA_RECORDATORIOS.add(new Recordatorio(titulo, fechaHora));
+                long fecha = obj.getLong("fecha");
+                LISTA_RECORDATORIOS.add(new Recordatorio(titulo, fecha));
             }
-        } catch (Exception e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    // Método estático para que CalendarActivity sepa si hay recordatorios en un día
-    public static boolean tieneRecordatorio(int year, int month, int dayOfMonth) {
+    private void guardarRecordatoriosEnPrefs() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        JSONArray arr = new JSONArray();
+
+        for (Recordatorio r : LISTA_RECORDATORIOS) {
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("titulo", r.titulo);
+                obj.put("fecha", r.fechaHoraMillis);
+                arr.put(obj);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        prefs.edit().putString(KEY_RECORDATORIOS, arr.toString()).apply();
+    }
+
+    // ---------------------------------------------------------------------
+    //  MÉTODOS ESTÁTICOS PARA CalendarActivity
+    // ---------------------------------------------------------------------
+    public static boolean tieneRecordatorio(int year, int month, int day) {
         Calendar c = Calendar.getInstance();
         for (Recordatorio r : LISTA_RECORDATORIOS) {
             c.setTimeInMillis(r.fechaHoraMillis);
-            if (c.get(Calendar.YEAR) == year
-                    && c.get(Calendar.MONTH) == month
-                    && c.get(Calendar.DAY_OF_MONTH) == dayOfMonth) {
+            if (c.get(Calendar.YEAR) == year &&
+                    c.get(Calendar.MONTH) == month &&
+                    c.get(Calendar.DAY_OF_MONTH) == day) {
                 return true;
             }
         }
@@ -309,7 +321,7 @@ public class HomeActivity extends AppCompatActivity {
     // ---------------------------------------------------------------------
     //  MODELO DE DATOS
     // ---------------------------------------------------------------------
-    private static class Recordatorio {
+    static class Recordatorio {
         String titulo;
         long fechaHoraMillis;
 
