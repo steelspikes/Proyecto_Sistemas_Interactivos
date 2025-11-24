@@ -108,98 +108,109 @@
                 android:textColor="@color/colorTextoBoton" />
 
             <!-- Días de la semana -->
+            <!-- Días de la semana -->
             <LinearLayout
                 android:id="@+id/layoutDiasSemana"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
 
+                <!-- Domingo -->
                 <TextView
                     android:id="@+id/txtDiaDomingo"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
                     android:gravity="center"
                     android:text="D"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:textSize="16sp"
                     android:background="@drawable/circle_day"
                     android:layout_margin="4dp" />
 
+                <!-- Lunes -->
                 <TextView
                     android:id="@+id/txtDiaLunes"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
                     android:gravity="center"
                     android:text="L"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:textSize="16sp"
                     android:background="@drawable/circle_day"
                     android:layout_margin="4dp" />
 
+                <!-- Martes -->
                 <TextView
                     android:id="@+id/txtDiaMartes"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
                     android:gravity="center"
                     android:text="M"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:textSize="16sp"
                     android:background="@drawable/circle_day"
                     android:layout_margin="4dp" />
 
+                <!-- Miércoles -->
                 <TextView
                     android:id="@+id/txtDiaMiercoles"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
                     android:gravity="center"
                     android:text="M"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:textSize="16sp"
                     android:background="@drawable/circle_day"
                     android:layout_margin="4dp" />
 
+                <!-- Jueves -->
                 <TextView
                     android:id="@+id/txtDiaJueves"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
                     android:gravity="center"
                     android:text="J"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:textSize="16sp"
                     android:background="@drawable/circle_day"
                     android:layout_margin="4dp" />
 
+                <!-- Viernes -->
                 <TextView
                     android:id="@+id/txtDiaViernes"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
                     android:gravity="center"
                     android:text="V"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:textSize="16sp"
                     android:background="@drawable/circle_day"
                     android:layout_margin="4dp" />
 
+                <!-- Sábado -->
                 <TextView
                     android:id="@+id/txtDiaSabado"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
                     android:gravity="center"
                     android:text="S"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:textSize="16sp"
                     android:background="@drawable/circle_day"
                     android:layout_margin="4dp" />
             </LinearLayout>
+
 
             <!-- Mensaje cuando no hay recordatorios -->
             <TextView

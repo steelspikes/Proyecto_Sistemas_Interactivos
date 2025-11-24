@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,12 +28,15 @@ public class HomeActivity extends AppCompatActivity {
     private LinearLayout contenedorRecordatorios;
     private TextView txtSinRecordatorios;
 
+    // Botón de calendario (el texto 📅 de la barra gris)
+    private TextView btnIrCalendario;
+
     // Días de la semana
     private TextView txtDiaDomingo, txtDiaLunes, txtDiaMartes,
             txtDiaMiercoles, txtDiaJueves, txtDiaViernes, txtDiaSabado;
 
     // Lista de recordatorios (se mantiene en memoria mientras la app esté abierta)
-    static final List<Recordatorio> LISTA_RECORDATORIOS = new ArrayList<>();
+    private static final List<Recordatorio> LISTA_RECORDATORIOS = new ArrayList<>();
 
     // Para el diálogo de nuevo recordatorio
     private final Calendar fechaHoraSeleccionada = Calendar.getInstance();
@@ -59,13 +63,18 @@ public class HomeActivity extends AppCompatActivity {
         txtDiaViernes = findViewById(R.id.txtDiaViernes);
         txtDiaSabado = findViewById(R.id.txtDiaSabado);
 
-        // Marca el día actual (círculo rosa)
+        // 📅 Botón de calendario en la barra gris
+        btnIrCalendario = findViewById(R.id.btnIrCalendario);
+        btnIrCalendario.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, CalendarActivity.class);
+            startActivity(intent);
+        });
+
         marcarDiaActual();
 
-        // Botón "Agregar recordatorio"
         btnAgregarRecordatorio.setOnClickListener(v -> mostrarDialogoNuevoRecordatorio());
 
-        // Pinta los recordatorios que ya existan
+        // Pinta los recordatorios que ya existan (por ejemplo si ya habías abierto antes)
         actualizarListaRecordatorios();
     }
 
@@ -228,19 +237,14 @@ public class HomeActivity extends AppCompatActivity {
                 && c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
     }
 
-    // ---------------------------------------------------------------------
-    //  MÉTODO QUE USA CalendarActivity PARA SABER SI UN DÍA TIENE EVENTO
-    // ---------------------------------------------------------------------
+    // Método estático para que CalendarActivity sepa si hay recordatorios en un día
     public static boolean tieneRecordatorio(int year, int month, int dayOfMonth) {
+        Calendar c = Calendar.getInstance();
         for (Recordatorio r : LISTA_RECORDATORIOS) {
-            Calendar c = Calendar.getInstance();
             c.setTimeInMillis(r.fechaHoraMillis);
-
-            int y = c.get(Calendar.YEAR);
-            int m = c.get(Calendar.MONTH);           // Ojo: 0 = enero
-            int d = c.get(Calendar.DAY_OF_MONTH);
-
-            if (y == year && m == month && d == dayOfMonth) {
+            if (c.get(Calendar.YEAR) == year
+                    && c.get(Calendar.MONTH) == month
+                    && c.get(Calendar.DAY_OF_MONTH) == dayOfMonth) {
                 return true;
             }
         }
@@ -250,7 +254,7 @@ public class HomeActivity extends AppCompatActivity {
     // ---------------------------------------------------------------------
     //  MODELO DE DATOS
     // ---------------------------------------------------------------------
-    static class Recordatorio {
+    private static class Recordatorio {
         String titulo;
         long fechaHoraMillis;
 
