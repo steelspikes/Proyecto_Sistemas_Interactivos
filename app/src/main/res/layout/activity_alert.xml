@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorFondo">
+
+    <!-- Marco azul turquesa -->
+    <FrameLayout
+        android:id="@+id/alarmFrame"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="24dp"
+        android:background="@color/colorPrimario"
+        android:padding="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Tarjeta interna blanca -->
+        <LinearLayout
+            android:id="@+id/alarmCard"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:background="@android:color/white"
+            android:padding="32dp">
+
+            <!-- Título -->
+
+            <!-- Imagen (puedes cambiarla por una pastilla si quieres) -->
+
+            <!-- Botones -->
+
+            <TextView
+                android:id="@+id/txtTituloAlarma"
+                android:layout_width="wrap_content"
+                android:layout_height="414dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="40dp"
+                android:gravity="center"
+                android:text="ALARMA"
+                android:textColor="@android:color/black"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/btnDetener"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/btn_primary"
+                    android:backgroundTint="@null"
+                    android:text="Detener"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorTextoBoton" />
+
+                <Button
+                    android:id="@+id/btnMas5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/btn_snooze"
+                    android:backgroundTint="@null"
+                    android:text="+5 Minutos"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorTextoBoton" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

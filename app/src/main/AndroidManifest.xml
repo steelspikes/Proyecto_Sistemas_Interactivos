@@ -42,7 +42,7 @@
             android:name=".AddReminderActivity"
             android:exported="false" />
 
-
+        <activity android:name=".AlertActivity" />
 
 
     </application>
