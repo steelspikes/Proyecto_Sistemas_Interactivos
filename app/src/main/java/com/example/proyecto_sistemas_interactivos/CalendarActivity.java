@@ -162,12 +162,12 @@ public class CalendarActivity extends AppCompatActivity {
             tv.setPadding(0, 16, 0, 16);
 
             int diaNumero = i - offset + 1;
-
             if (diaNumero >= 1 && diaNumero <= diasEnMes) {
                 tv.setText(String.valueOf(diaNumero));
 
-                // 👇 AQUÍ ESTABA EL ERROR: usamos las variables correctas
+                // ✅ Aquí usamos el método con Context:
                 boolean tieneRec = HomeActivity.tieneRecordatorio(
+                        CalendarActivity.this,   // Context
                         anioActual,
                         mesSeleccionado,
                         diaNumero
