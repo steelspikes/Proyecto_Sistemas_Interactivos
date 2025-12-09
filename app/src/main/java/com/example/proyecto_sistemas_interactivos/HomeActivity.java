@@ -10,13 +10,14 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.EditText;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -29,174 +30,185 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import android.os.Build;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.widget.Toast;
 
 
 public class HomeActivity extends AppCompatActivity {
 
-    // UI principal
+    // --- Preferencias para guardar recordatorios ---
+    private static final String PREFS_RECORDATORIOS = "prefs_recordatorios";
+    private static final String KEY_LISTA           = "lista_recordatorios";
+
+    // --- UI principal ---
     private Button btnAgregarRecordatorio;
     private LinearLayout contenedorRecordatorios;
     private TextView txtSinRecordatorios;
-    private TextView btnIrCalendario;
 
     // Días de la semana
     private TextView txtDiaDomingo, txtDiaLunes, txtDiaMartes,
             txtDiaMiercoles, txtDiaJueves, txtDiaViernes, txtDiaSabado;
 
-    // Fechas reales de la semana actual (D, L, M, M, J, V, S)
-    private final Calendar[] diasSemana = new Calendar[7];
-    private int indiceDiaSeleccionado = 0; // 0 = Domingo
+    // Fecha seleccionada (por defecto hoy)
+    private final Calendar fechaSeleccionada = Calendar.getInstance();
 
-    // Lista en memoria (siempre sincronizada con SharedPreferences)
+    // Lista en memoria
     private List<Recordatorio> listaRecordatorios = new ArrayList<>();
 
-    // Para el diálogo de nuevo recordatorio
-    private final Calendar fechaHoraSeleccionada = Calendar.getInstance();
+    // Formatos
     private final SimpleDateFormat formatoFecha =
             new SimpleDateFormat("EEE, d 'de' MMM", Locale.getDefault());
     private final SimpleDateFormat formatoHora =
             new SimpleDateFormat("h:mm a", Locale.getDefault());
-
-    // SharedPreferences
-    private static final String PREFS_NAME = "recordatorios_prefs";
-    private static final String KEY_RECORDATORIOS = "lista_recordatorios_json";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        // Referencias UI
-        btnAgregarRecordatorio = findViewById(R.id.btnAgregarRecordatorio);
-        contenedorRecordatorios = findViewById(R.id.contenedorRecordatorios);
-        txtSinRecordatorios = findViewById(R.id.txtSinRecordatorios);
-        btnIrCalendario = findViewById(R.id.btnIrCalendario);
-
-        txtDiaDomingo = findViewById(R.id.txtDiaDomingo);
-        txtDiaLunes = findViewById(R.id.txtDiaLunes);
-        txtDiaMartes = findViewById(R.id.txtDiaMartes);
-        txtDiaMiercoles = findViewById(R.id.txtDiaMiercoles);
-        txtDiaJueves = findViewById(R.id.txtDiaJueves);
-        txtDiaViernes = findViewById(R.id.txtDiaViernes);
-        txtDiaSabado = findViewById(R.id.txtDiaSabado);
-
-        // Semana actual y día seleccionado
-        inicializarSemana();
-
-        // Click en botón "Agregar recordatorio"
-        btnAgregarRecordatorio.setOnClickListener(v -> mostrarDialogoNuevoRecordatorio());
-
-        // Click en icono de calendario (arriba a la derecha)
-        btnIrCalendario.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeActivity.this, CalendarActivity.class);
-            startActivity(intent);
-        });
-
-        // Click en cada círculo de día
-        configurarClicksDiasSemana();
-
-        // Cargar recordatorios desde memoria y prefs
-        listaRecordatorios = cargarListaDesdePrefs(this);
-
-        // Reprogramar alarmas pendientes (por si abriste la app después)
-        reprogramarTodasLasAlarmas(this);
-
-        // Mostrar lista de hoy (día seleccionado)
-        actualizarListaRecordatorios();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Por si algo cambió (por ejemplo desde AlertActivity)
-        listaRecordatorios = cargarListaDesdePrefs(this);
-        actualizarListaRecordatorios();
-    }
-
-    // -------------------------------------------------------------
-    //   SEMANA ACTUAL Y DÍAS
-    // -------------------------------------------------------------
-    private void inicializarSemana() {
-        Calendar hoy = Calendar.getInstance();
-        int dow = hoy.get(Calendar.DAY_OF_WEEK); // 1=Domingo..7=Sábado
-
-        // Obtener el domingo de esta semana
-        Calendar domingo = (Calendar) hoy.clone();
-        int diff = dow - Calendar.SUNDAY; // cuántos días me tengo que mover hacia atrás
-        domingo.add(Calendar.DAY_OF_MONTH, -diff);
-
-        for (int i = 0; i < 7; i++) {
-            Calendar c = (Calendar) domingo.clone();
-            c.add(Calendar.DAY_OF_MONTH, i);
-            diasSemana[i] = c;
+        // 🔔 Pedir permiso de notificaciones en Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        100
+                );
+            }
         }
 
-        indiceDiaSeleccionado = dow - 1; // 0..6
-        marcarDiaSeleccionado();
+
+        // Ir a calendario (icono 📅)
+        TextView btnIrCalendario = findViewById(R.id.btnIrCalendario);
+        btnIrCalendario.setOnClickListener(v -> {
+            Intent i = new Intent(HomeActivity.this, CalendarActivity.class);
+            startActivity(i);
+        });
+
+        // Referencias UI
+        btnAgregarRecordatorio   = findViewById(R.id.btnAgregarRecordatorio);
+        contenedorRecordatorios  = findViewById(R.id.contenedorRecordatorios);
+        txtSinRecordatorios      = findViewById(R.id.txtSinRecordatorios);
+
+        txtDiaDomingo   = findViewById(R.id.txtDiaDomingo);
+        txtDiaLunes     = findViewById(R.id.txtDiaLunes);
+        txtDiaMartes    = findViewById(R.id.txtDiaMartes);
+        txtDiaMiercoles = findViewById(R.id.txtDiaMiercoles);
+        txtDiaJueves    = findViewById(R.id.txtDiaJueves);
+        txtDiaViernes   = findViewById(R.id.txtDiaViernes);
+        txtDiaSabado    = findViewById(R.id.txtDiaSabado);
+
+        // Cargar recordatorios desde preferencias
+        listaRecordatorios = cargarRecordatorios(this);
+
+        // Marcar el día actual en los círculos
+        marcarDiaActual();
+
+        // Click en cada día de la semana -> cambiar fecha seleccionada
+        configurarClicksDiasSemana();
+
+        // Botón agregar recordatorio
+        btnAgregarRecordatorio.setOnClickListener(v -> mostrarDialogoNuevoRecordatorio());
+
+        // Pintar los recordatorios del día seleccionado (hoy)
+        actualizarListaRecordatorios();
     }
 
-    private void configurarClicksDiasSemana() {
-        txtDiaDomingo.setOnClickListener(v -> {
-            indiceDiaSeleccionado = 0;
-            marcarDiaSeleccionado();
-            actualizarListaRecordatorios();
-        });
-        txtDiaLunes.setOnClickListener(v -> {
-            indiceDiaSeleccionado = 1;
-            marcarDiaSeleccionado();
-            actualizarListaRecordatorios();
-        });
-        txtDiaMartes.setOnClickListener(v -> {
-            indiceDiaSeleccionado = 2;
-            marcarDiaSeleccionado();
-            actualizarListaRecordatorios();
-        });
-        txtDiaMiercoles.setOnClickListener(v -> {
-            indiceDiaSeleccionado = 3;
-            marcarDiaSeleccionado();
-            actualizarListaRecordatorios();
-        });
-        txtDiaJueves.setOnClickListener(v -> {
-            indiceDiaSeleccionado = 4;
-            marcarDiaSeleccionado();
-            actualizarListaRecordatorios();
-        });
-        txtDiaViernes.setOnClickListener(v -> {
-            indiceDiaSeleccionado = 5;
-            marcarDiaSeleccionado();
-            actualizarListaRecordatorios();
-        });
-        txtDiaSabado.setOnClickListener(v -> {
-            indiceDiaSeleccionado = 6;
-            marcarDiaSeleccionado();
-            actualizarListaRecordatorios();
-        });
+    // ---------------------------------------------------------------------
+    //  MODELO
+    // ---------------------------------------------------------------------
+    public static class Recordatorio {
+        long id;                // identificador único
+        String titulo;
+        long fechaHoraMillis;
+        boolean completado;
+
+        public Recordatorio(long id, String titulo, long fechaHoraMillis, boolean completado) {
+            this.id = id;
+            this.titulo = titulo;
+            this.fechaHoraMillis = fechaHoraMillis;
+            this.completado = completado;
+        }
     }
 
-    private void marcarDiaSeleccionado() {
+    // ---------------------------------------------------------------------
+    //  UTILIDADES DE PREFERENCIAS
+    // ---------------------------------------------------------------------
+    private static List<Recordatorio> cargarRecordatorios(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(
+                PREFS_RECORDATORIOS, Context.MODE_PRIVATE);
+        String json = prefs.getString(KEY_LISTA, null);
+        if (json == null || json.isEmpty()) {
+            return new ArrayList<>();
+        }
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<Recordatorio>>() {}.getType();
+        List<Recordatorio> lista = gson.fromJson(json, type);
+        return (lista != null) ? lista : new ArrayList<>();
+    }
+
+    private static void guardarRecordatorios(Context context, List<Recordatorio> lista) {
+        SharedPreferences prefs = context.getSharedPreferences(
+                PREFS_RECORDATORIOS, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = gson.toJson(lista);
+        prefs.edit().putString(KEY_LISTA, json).apply();
+    }
+
+    // ---------------------------------------------------------------------
+    //  DÍAS DE LA SEMANA
+    // ---------------------------------------------------------------------
+    private void marcarDiaActual() {
         TextView[] dias = new TextView[]{
                 txtDiaDomingo, txtDiaLunes, txtDiaMartes, txtDiaMiercoles,
                 txtDiaJueves, txtDiaViernes, txtDiaSabado
         };
 
-        // Todos verdes
+        // Todo en verde
         for (TextView tv : dias) {
             tv.setBackgroundResource(R.drawable.circle_day);
         }
 
-        // El seleccionado en rosa
-        if (indiceDiaSeleccionado >= 0 && indiceDiaSeleccionado < dias.length) {
-            dias[indiceDiaSeleccionado].setBackgroundResource(R.drawable.circle_day_hoy);
+        Calendar hoy = Calendar.getInstance();
+        int diaSemana = hoy.get(Calendar.DAY_OF_WEEK); // Domingo = 1 ... Sábado = 7
+        int index = diaSemana - 1;
+        if (index >= 0 && index < dias.length) {
+            dias[index].setBackgroundResource(R.drawable.circle_day_hoy);
         }
     }
 
-    // -------------------------------------------------------------
-    //   DIÁLOGO "NUEVO RECORDATORIO"
-    // -------------------------------------------------------------
+    private void configurarClicksDiasSemana() {
+        txtDiaDomingo.setOnClickListener(v -> cambiarDiaSemana(Calendar.SUNDAY));
+        txtDiaLunes.setOnClickListener(v -> cambiarDiaSemana(Calendar.MONDAY));
+        txtDiaMartes.setOnClickListener(v -> cambiarDiaSemana(Calendar.TUESDAY));
+        txtDiaMiercoles.setOnClickListener(v -> cambiarDiaSemana(Calendar.WEDNESDAY));
+        txtDiaJueves.setOnClickListener(v -> cambiarDiaSemana(Calendar.THURSDAY));
+        txtDiaViernes.setOnClickListener(v -> cambiarDiaSemana(Calendar.FRIDAY));
+        txtDiaSabado.setOnClickListener(v -> cambiarDiaSemana(Calendar.SATURDAY));
+    }
+
+    /** Cambia la fecha seleccionada al día indicado de ESTA semana y refresca lista */
+    private void cambiarDiaSemana(int diaSemana) {
+        Calendar hoy = Calendar.getInstance();
+        int dif = diaSemana - hoy.get(Calendar.DAY_OF_WEEK);
+        fechaSeleccionada.setTimeInMillis(hoy.getTimeInMillis());
+        fechaSeleccionada.add(Calendar.DAY_OF_MONTH, dif);
+
+        // Actualiza los círculos (solo cambia colores, el de hoy sigue rosa)
+        marcarDiaActual();
+
+        // Refresca lista para ese día
+        actualizarListaRecordatorios();
+    }
+
+    // ---------------------------------------------------------------------
+    //  DIÁLOGO "NUEVO RECORDATORIO"
+    // ---------------------------------------------------------------------
     private void mostrarDialogoNuevoRecordatorio() {
-        // Fecha/hora inicial: ahora
-        fechaHoraSeleccionada.setTimeInMillis(System.currentTimeMillis());
+        // Por defecto: ahora
+        Calendar fechaHoraSeleccionada = Calendar.getInstance();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Nuevo recordatorio");
@@ -211,7 +223,6 @@ public class HomeActivity extends AppCompatActivity {
         Button btnElegirFecha = view.findViewById(R.id.btnElegirFecha);
         Button btnElegirHora = view.findViewById(R.id.btnElegirHora);
 
-        // Muestra fecha/hora inicial
         txtFechaSel.setText(formatoFecha.format(fechaHoraSeleccionada.getTime()));
         txtHoraSel.setText(formatoHora.format(fechaHoraSeleccionada.getTime()));
 
@@ -251,7 +262,7 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         builder.setNegativeButton("Cancelar", (d, which) -> d.dismiss());
-        builder.setPositiveButton("Guardar", null); // sobrescribimos para validar
+        builder.setPositiveButton("Guardar", null);
 
         AlertDialog dialog = builder.create();
         dialog.setOnShowListener(dlg -> {
@@ -263,24 +274,28 @@ public class HomeActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Creamos recordatorio
-                Recordatorio r = new Recordatorio();
-                r.id = System.currentTimeMillis();
-                r.titulo = titulo;
-                r.fechaHoraMillis = fechaHoraSeleccionada.getTimeInMillis();
-                r.completado = false;
+                // Crear recordatorio
+                long id = System.currentTimeMillis(); // id simple
+                Recordatorio r = new Recordatorio(
+                        id,
+                        titulo,
+                        fechaHoraSeleccionada.getTimeInMillis(),
+                        false
+                );
 
+                // Añadir a la lista, guardar y ordenar
                 listaRecordatorios.add(r);
-                // Ordenar por hora
-                Collections.sort(listaRecordatorios, Comparator.comparingLong(o -> o.fechaHoraMillis));
+                ordenarListaPorHora(listaRecordatorios);
+                guardarRecordatorios(HomeActivity.this, listaRecordatorios);
 
-                // Guardar
-                guardarListaEnPrefs(HomeActivity.this, listaRecordatorios);
+                // Programar alarma (protegido con try/catch para evitar crasheos)
+                try {
+                    programarAlarma(HomeActivity.this, r);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-                // Programar alarma para pantalla completa
-                programarAlarma(HomeActivity.this, r);
-
-                // Actualizar UI (por si es para el día seleccionado)
+                // Refrescar lista para la fecha actualmente seleccionada
                 actualizarListaRecordatorios();
 
                 dialog.dismiss();
@@ -290,39 +305,41 @@ public class HomeActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    // -------------------------------------------------------------
-    //   LISTA DINÁMICA (DÍA SELECCIONADO)
-    // -------------------------------------------------------------
+    private void ordenarListaPorHora(List<Recordatorio> lista) {
+        Collections.sort(lista, new Comparator<Recordatorio>() {
+            @Override
+            public int compare(Recordatorio r1, Recordatorio r2) {
+                return Long.compare(r1.fechaHoraMillis, r2.fechaHoraMillis);
+            }
+        });
+    }
+
+    // ---------------------------------------------------------------------
+    //  LISTA DINÁMICA DE RECORDATORIOS PARA LA FECHA SELECCIONADA
+    // ---------------------------------------------------------------------
     private void actualizarListaRecordatorios() {
+        // Siempre recargamos de preferencias por si cambió fuera
+        listaRecordatorios = cargarRecordatorios(this);
+        ordenarListaPorHora(listaRecordatorios);
+
         contenedorRecordatorios.removeAllViews();
 
-        // Siempre leo desde prefs por si cambió algo en segundo plano
-        listaRecordatorios = cargarListaDesdePrefs(this);
-
-        // Ordenados por fecha/hora
-        Collections.sort(listaRecordatorios, Comparator.comparingLong(o -> o.fechaHoraMillis));
-
-        Calendar fechaFiltro = diasSemana[indiceDiaSeleccionado];
-        boolean hay = false;
-
         LayoutInflater inflater = LayoutInflater.from(this);
-        Calendar aux = Calendar.getInstance();
+        boolean hayRecordatorios = false;
 
         for (Recordatorio r : listaRecordatorios) {
-            aux.setTimeInMillis(r.fechaHoraMillis);
-
-            if (esMismoDia(aux, fechaFiltro)) {
-                hay = true;
+            if (esMismoDia(fechaSeleccionada.getTimeInMillis(), r.fechaHoraMillis)) {
+                hayRecordatorios = true;
 
                 View card = inflater.inflate(R.layout.item_recordatorio, contenedorRecordatorios, false);
 
                 TextView txtTitulo = card.findViewById(R.id.txtTituloRecordatorio);
-                TextView txtHora = card.findViewById(R.id.txtHoraRecordatorio);
+                TextView txtHora   = card.findViewById(R.id.txtHoraRecordatorio);
 
                 txtTitulo.setText(r.titulo);
-                txtHora.setText(formatoHora.format(r.getDate()));
+                txtHora.setText(formatoHora.format(r.fechaHoraMillis));
 
-                // Si está completado, se ve "gris" (más tenue)
+                // Si está completado, se "apaga" un poco
                 if (r.completado) {
                     card.setAlpha(0.4f);
                 } else {
@@ -333,157 +350,128 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
 
-        txtSinRecordatorios.setVisibility(hay ? View.GONE : View.VISIBLE);
+        txtSinRecordatorios.setVisibility(hayRecordatorios ? View.GONE : View.VISIBLE);
     }
 
-    private boolean esMismoDia(Calendar c1, Calendar c2) {
+    private boolean esMismoDia(long t1, long t2) {
+        Calendar c1 = Calendar.getInstance();
+        c1.setTimeInMillis(t1);
+
+        Calendar c2 = Calendar.getInstance();
+        c2.setTimeInMillis(t2);
+
         return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR)
                 && c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
     }
 
-    // -------------------------------------------------------------
-    //   PERSISTENCIA con SharedPreferences + Gson
-    // -------------------------------------------------------------
-    private static List<Recordatorio> cargarListaDesdePrefs(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String json = prefs.getString(KEY_RECORDATORIOS, null);
-        if (json == null) return new ArrayList<>();
+    // ---------------------------------------------------------------------
+    //  MÉTODOS ESTÁTICOS USADOS POR OTRAS CLASES
+    // ---------------------------------------------------------------------
 
-        Type type = new TypeToken<List<Recordatorio>>() {}.getType();
-        List<Recordatorio> lista = new Gson().fromJson(json, type);
-        return (lista != null) ? lista : new ArrayList<>();
-    }
-
-    private static void guardarListaEnPrefs(Context context, List<Recordatorio> lista) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String json = new Gson().toJson(lista);
-        prefs.edit().putString(KEY_RECORDATORIOS, json).apply();
-    }
-
-    // -------------------------------------------------------------
-    //   MÉTODOS USADOS POR OTRAS ACTIVITIES
-    //   (CalendarActivity y AlertActivity)
-    // -------------------------------------------------------------
-
-    /** Indica si existe al menos un recordatorio (no completado) en esa fecha. */
-    public static boolean tieneRecordatorio(Context context, int year, int month, int day) {
-        List<Recordatorio> lista = cargarListaDesdePrefs(context);
+    /** Lo usa CalendarActivity para pintar días en rosa */
+    public static boolean tieneRecordatorio(Context context,
+                                            int year, int month, int day) {
+        List<Recordatorio> lista = cargarRecordatorios(context);
         Calendar c = Calendar.getInstance();
-
         for (Recordatorio r : lista) {
-            if (r.completado) continue;
-
             c.setTimeInMillis(r.fechaHoraMillis);
-            if (c.get(Calendar.YEAR) == year
-                    && c.get(Calendar.MONTH) == month
-                    && c.get(Calendar.DAY_OF_MONTH) == day) {
+            if (c.get(Calendar.YEAR) == year &&
+                    c.get(Calendar.MONTH) == month &&
+                    c.get(Calendar.DAY_OF_MONTH) == day &&
+                    !r.completado) {
                 return true;
             }
         }
         return false;
     }
 
-    /** Marca un recordatorio como completado (se usará al pulsar "Detener" en la alerta). */
     public static void marcarRecordatorioCompletado(Context context, long id) {
-        List<Recordatorio> lista = cargarListaDesdePrefs(context);
-        boolean cambio = false;
-
+        List<Recordatorio> lista = cargarRecordatorios(context);
         for (Recordatorio r : lista) {
             if (r.id == id) {
                 r.completado = true;
-                cambio = true;
                 break;
             }
         }
-
-        if (cambio) {
-            guardarListaEnPrefs(context, lista);
-        }
+        guardarRecordatorios(context, lista);
     }
 
-    /** Posponer 5 minutos (se usa al pulsar "+5 minutos"). */
     public static void posponer5Minutos(Context context, long id) {
-        List<Recordatorio> lista = cargarListaDesdePrefs(context);
-        boolean cambio = false;
-        long ahoraMas5 = System.currentTimeMillis() + 5 * 60 * 1000L;
-        Recordatorio objetivo = null;
-
+        List<Recordatorio> lista = cargarRecordatorios(context);
+        Recordatorio target = null;
         for (Recordatorio r : lista) {
             if (r.id == id) {
-                r.completado = false;
-                r.fechaHoraMillis = ahoraMas5;
-                objetivo = r;
-                cambio = true;
+                target = r;
                 break;
             }
         }
+        if (target == null) return;
 
-        if (cambio) {
-            guardarListaEnPrefs(context, lista);
-            if (objetivo != null) {
-                programarAlarma(context, objetivo);
-            }
-        }
+        // Sumar 5 minutos
+        target.fechaHoraMillis += 5 * 60 * 1000;
+        target.completado = false;
+        guardarRecordatorios(context, lista);
+
+        // Reprogramar la alarma
+        programarAlarma(context, target);
     }
 
-    /** Programa una alarma del sistema que abrirá AlertActivity a la hora indicada. */
     public static void programarAlarma(Context context, Recordatorio r) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (am == null) return;
 
-        Intent intent = new Intent(context, AlertActivity.class);
-        intent.putExtra("ID_RECORDATORIO", r.id);
-        intent.putExtra("TITULO_RECORDATORIO", r.titulo);
+        long now = System.currentTimeMillis();
+        long triggerAtMillis = r.fechaHoraMillis;
 
-        PendingIntent pi = PendingIntent.getActivity(
+        // Si quedó en el pasado, la movemos 10 segundos al futuro para pruebas
+        if (triggerAtMillis <= now) {
+            triggerAtMillis = now + 10_000;
+        }
+
+        // Toast de depuración
+        java.text.DateFormat df = java.text.DateFormat.getDateTimeInstance();
+        String textoHora = df.format(new java.util.Date(triggerAtMillis));
+        android.widget.Toast.makeText(
                 context,
-                (int) r.id,
+                "Programando alarma para: " + textoHora,
+                android.widget.Toast.LENGTH_LONG
+        ).show();
+
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.putExtra(AlertActivity.EXTRA_TITULO, r.titulo);
+        intent.putExtra(AlertActivity.EXTRA_ID, r.id);
+
+        int requestCode = (int) (r.id % Integer.MAX_VALUE);
+
+        PendingIntent pi = PendingIntent.getBroadcast(
+                context,
+                requestCode,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        long triggerAtMillis = r.fechaHoraMillis;
-
         try {
-            // Android 6+ con exact while idle (puede requerir permiso en Android 14)
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                // Android 12+ pide permiso para alarmas exactas
+                if (am.canScheduleExactAlarms()) {
+                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pi);
+                } else {
+                    // No tenemos permiso de exactas → usamos una normal
+                    am.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pi);
+                }
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pi);
-            } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 am.setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pi);
             } else {
                 am.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pi);
             }
         } catch (SecurityException e) {
-            // Si el sistema no deja usar alarmas exactas (Android 14 sin permiso),
-            // usamos una alarma normal para evitar que la app se cierre.
+            // Por si el sistema bloquea las alarmas exactas
+            e.printStackTrace();
             am.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pi);
         }
     }
 
 
-    /** Vuelve a programar las alarmas de todos los recordatorios pendientes. */
-    public static void reprogramarTodasLasAlarmas(Context context) {
-        List<Recordatorio> lista = cargarListaDesdePrefs(context);
-        long ahora = System.currentTimeMillis();
-
-        for (Recordatorio r : lista) {
-            if (!r.completado && r.fechaHoraMillis > ahora) {
-                programarAlarma(context, r);
-            }
-        }
-    }
-
-    // -------------------------------------------------------------
-    //   MODELO DE DATOS
-    // -------------------------------------------------------------
-    public static class Recordatorio {
-        long id;
-        String titulo;
-        long fechaHoraMillis;
-        boolean completado;
-
-        public java.util.Date getDate() {
-            return new java.util.Date(fechaHoraMillis);
-        }
-    }
 }
