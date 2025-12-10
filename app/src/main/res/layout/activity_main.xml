@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorFondo"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
     <!-- CONTENEDOR SUPERIOR (BANNER) -->
@@ -34,7 +35,8 @@
             android:id="@+id/txtTitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CREAR\nCUENTA"
+            android:text="CREAR
+CUENTA"
             android:textColor="@android:color/white"
             android:textSize="30sp"
             android:textStyle="bold"
@@ -46,105 +48,123 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- CONTENEDOR DE CAMPOS Y BOTONES -->
-    <LinearLayout
-        android:id="@+id/formContainer"
+    <ScrollView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp"
+        android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/headerContainer"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Correo -->
-        <EditText
-            android:id="@+id/edtCorreo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_edittext"
-            android:hint="Correo"
-            android:inputType="textEmailAddress"
-            android:textColor="@color/colorTexto"
-            android:textColorHint="@color/colorBordeBoton" />
-
-        <!-- Contraseña -->
-        <EditText
-            android:id="@+id/edtContrasena"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_edittext"
-            android:hint="Contraseña"
-            android:inputType="textPassword"
-            android:textColor="@color/colorTexto"
-            android:textColorHint="@color/colorBordeBoton" />
-
-        <!-- Confirmar contraseña -->
-        <EditText
-            android:id="@+id/edtConfirmarContrasena"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_edittext"
-            android:hint="Confirmar contraseña"
-            android:inputType="textPassword"
-            android:textColor="@color/colorTexto"
-            android:textColorHint="@color/colorBordeBoton" />
-
-        <!-- Botón CREAR CUENTA -->
-        <Button
-            android:id="@+id/btnCrearCuenta"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/btn_primary"
-            android:backgroundTint="@null"
-            android:text="CREAR CUENTA"
-            android:textAllCaps="true"
-            android:textColor="@color/colorTextoBoton" />
-
-        <!-- Separador con línea - círculo - línea -->
         <LinearLayout
+            android:id="@+id/formContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp">
+            android:orientation="vertical"
+            android:padding="24dp">
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@color/colorBordeBoton" />
+            <!-- Correo -->
+            <EditText
+                android:id="@+id/edtCorreo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_edittext"
+                android:hint="Correo"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/colorTexto"
+                android:textColorHint="@color/colorBordeBoton" />
 
-            <View
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/circle_separator" />
+            <!-- Contraseña -->
+            <EditText
+                android:id="@+id/edtContrasena"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_edittext"
+                android:hint="Contraseña"
+                android:inputType="textPassword"
+                android:textColor="@color/colorTexto"
+                android:textColorHint="@color/colorBordeBoton" />
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@color/colorBordeBoton" />
+            <!-- Confirmar contraseña -->
+            <EditText
+                android:id="@+id/edtConfirmarContrasena"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_edittext"
+                android:hint="Confirmar contraseña"
+                android:inputType="textPassword"
+                android:textColor="@color/colorTexto"
+                android:textColorHint="@color/colorBordeBoton" />
+
+            <!-- Botón CREAR CUENTA -->
+            <Button
+                android:id="@+id/btnCrearCuenta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/btn_primary"
+                android:backgroundTint="@null"
+                android:text="CREAR CUENTA"
+                android:textAllCaps="true"
+                android:textColor="@color/colorTextoBoton" />
+
+            <!-- Separador con línea - círculo - línea -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorBordeBoton" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/circle_separator" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorBordeBoton" />
+            </LinearLayout>
+
+            <!-- Botón INICIAR SESION -->
+            <Button
+                android:id="@+id/btnIrALogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/btn_secondary"
+                android:backgroundTint="@null"
+                android:text="INICIAR SESION"
+                android:textAllCaps="true"
+                android:textColor="@color/colorTexto" />
+
+            <!-- Botón Iniciar sesión como tutor -->
+            <Button
+                android:id="@+id/btnIniciarSesionTutor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/btn_secondary"
+                android:backgroundTint="@null"
+                android:text="Iniciar sesión como tutor"
+                android:textAllCaps="true"
+                android:textColor="@color/colorTexto" />
+
         </LinearLayout>
-
-        <!-- Botón INICIAR SESION -->
-        <Button
-            android:id="@+id/btnIrALogin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/btn_secondary"
-            android:backgroundTint="@null"
-            android:text="INICIAR SESION"
-            android:textAllCaps="true"
-            android:textColor="@color/colorTexto" />
-
-    </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

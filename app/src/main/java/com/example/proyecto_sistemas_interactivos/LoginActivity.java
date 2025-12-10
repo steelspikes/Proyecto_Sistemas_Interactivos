@@ -12,7 +12,7 @@ import android.widget.Toast;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText edtCorreoLogin, edtContrasenaLogin;
-    private Button btnIniciarSesionLogin, btnIrARegistro;
+    private Button btnIniciarSesionLogin, btnIrARegistro, btnIniciarSesionTutor;
 
     // Constantes de prefs de usuario
     private static final String PREFS_USER = "user_prefs";
@@ -40,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         edtContrasenaLogin = findViewById(R.id.edtContrasenaLogin);
         btnIniciarSesionLogin = findViewById(R.id.btnIniciarSesionLogin);
         btnIrARegistro = findViewById(R.id.btnIrARegistro);
+        btnIniciarSesionTutor = findViewById(R.id.btnIniciarSesionTutor);
 
         btnIniciarSesionLogin.setOnClickListener(v -> {
             String email = edtCorreoLogin.getText().toString().trim();
@@ -74,6 +75,11 @@ public class LoginActivity extends AppCompatActivity {
 
         btnIrARegistro.setOnClickListener(v -> {
             Intent i = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(i);
+        });
+
+        btnIniciarSesionTutor.setOnClickListener(v -> {
+            Intent i = new Intent(LoginActivity.this, TutorActivity.class);
             startActivity(i);
         });
     }

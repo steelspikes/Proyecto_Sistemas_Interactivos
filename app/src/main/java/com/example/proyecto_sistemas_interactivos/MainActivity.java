@@ -11,8 +11,8 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText edtCorreo, edtContrasena, edtConfirmarContrasena;
-    private Button btnCrearCuenta, btnIrALogin;
+    private EditText edtNombreTutor, edtNombreUsuario, edtTelefono1, edtTelefono2, edtCorreo, edtContrasena, edtConfirmarContrasena;
+    private Button btnCrearCuenta, btnIrALogin, btnIniciarSesionTutor;
 
     // Constantes de prefs de usuario
     private static final String PREFS_USER = "user_prefs";
@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         edtConfirmarContrasena = findViewById(R.id.edtConfirmarContrasena);
         btnCrearCuenta = findViewById(R.id.btnCrearCuenta);
         btnIrALogin = findViewById(R.id.btnIrALogin);
+        btnIniciarSesionTutor = findViewById(R.id.btnIniciarSesionTutor);
 
         btnCrearCuenta.setOnClickListener(v -> {
             String email = edtCorreo.getText().toString().trim();
@@ -65,6 +66,12 @@ public class MainActivity extends AppCompatActivity {
 
         btnIrALogin.setOnClickListener(v -> {
             Intent i = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(i);
+            finish();
+        });
+
+        btnIniciarSesionTutor.setOnClickListener(v -> {
+            Intent i = new Intent(MainActivity.this, TutorActivity.class);
             startActivity(i);
             finish();
         });

@@ -44,6 +44,8 @@ public class HomeActivity extends AppCompatActivity {
 
     // --- UI principal ---
     private Button btnAgregarRecordatorio;
+    private TextView btnAddReminderFooter;
+    private TextView btnCalendarFooter;
     private LinearLayout contenedorRecordatorios;
     private TextView txtSinRecordatorios;
 
@@ -89,6 +91,8 @@ public class HomeActivity extends AppCompatActivity {
 
         // Referencias UI
         btnAgregarRecordatorio   = findViewById(R.id.btnAgregarRecordatorio);
+        btnAddReminderFooter     = findViewById(R.id.btnAddReminderFooter);
+        btnCalendarFooter        = findViewById(R.id.btnCalendarFooter);
         contenedorRecordatorios  = findViewById(R.id.contenedorRecordatorios);
         txtSinRecordatorios      = findViewById(R.id.txtSinRecordatorios);
 
@@ -111,6 +115,13 @@ public class HomeActivity extends AppCompatActivity {
 
         // Botón agregar recordatorio
         btnAgregarRecordatorio.setOnClickListener(v -> mostrarDialogoNuevoRecordatorio());
+
+        btnAddReminderFooter.setOnClickListener(v -> mostrarDialogoNuevoRecordatorio());
+
+        btnCalendarFooter.setOnClickListener(v -> {
+            Intent i = new Intent(HomeActivity.this, CalendarActivity.class);
+            startActivity(i);
+        });
 
         // Pintar los recordatorios del día seleccionado (hoy)
         actualizarListaRecordatorios();

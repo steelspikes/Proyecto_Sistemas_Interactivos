@@ -47,7 +47,15 @@
             android:exported="false" />
 
         <activity
+            android:name=".AddDependentActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".AlertActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".TutorActivity"
             android:exported="false" />
 
         <receiver
