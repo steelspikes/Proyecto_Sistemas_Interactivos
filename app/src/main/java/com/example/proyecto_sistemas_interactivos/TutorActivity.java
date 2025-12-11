@@ -142,6 +142,7 @@ public class TutorActivity extends AppCompatActivity {
         remindersTitle = findViewById(R.id.remindersTitle);
         remindersRecyclerView = findViewById(R.id.remindersRecyclerView);
         remindersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        remindersRecyclerView.setNestedScrollingEnabled(false);
         reminderList = new ArrayList<>();
         reminderAdapter = new ReminderAdapter(reminderList);
         remindersRecyclerView.setAdapter(reminderAdapter);
