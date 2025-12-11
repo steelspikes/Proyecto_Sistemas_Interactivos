@@ -57,19 +57,105 @@
             android:gravity="start|center_vertical" />
     </LinearLayout>
 
-    <!-- Contenido principal -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/dependentsRecyclerView"
+    <!-- Contenido scrollable -->
+    <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="16dp"
         app:layout_constraintTop_toBottomOf="@id/secondBar"
         app:layout_constraintBottom_toTopOf="@id/bottomBar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="2"
-        tools:listitem="@layout/item_dependent" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Dependientes -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/dependentsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="2"
+                tools:listitem="@layout/item_dependent" />
+
+            <!-- Calendario (reutilizado de activity_calendar) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Calendario de Actividades"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorTexto"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Grid de meses (oculto en esta pantalla) -->
+            <GridLayout
+                android:id="@+id/gridMeses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alignmentMode="alignMargins"
+                android:columnCount="3"
+                android:rowCount="4"
+                android:rowOrderPreserved="false"
+                android:useDefaultMargins="true"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <Button android:id="@+id/btnEne" style="@style/MonthButton" android:text="ENE" />
+                <Button android:id="@+id/btnFeb" style="@style/MonthButton" android:text="FEB" />
+                <Button android:id="@+id/btnMar" style="@style/MonthButton" android:text="MAR" />
+                <Button android:id="@+id/btnAbr" style="@style/MonthButton" android:text="ABR" />
+                <Button android:id="@+id/btnMay" style="@style/MonthButton" android:text="MAY" />
+                <Button android:id="@+id/btnJun" style="@style/MonthButton" android:text="JUN" />
+                <Button android:id="@+id/btnJul" style="@style/MonthButton" android:text="JUL" />
+                <Button android:id="@+id/btnAgo" style="@style/MonthButton" android:text="AGO" />
+                <Button android:id="@+id/btnSep" style="@style/MonthButton" android:text="SEP" />
+                <Button android:id="@+id/btnOct" style="@style/MonthButton" android:text="OCT" />
+                <Button android:id="@+id/btnNov" style="@style/MonthButton" android:text="NOV" />
+                <Button android:id="@+id/btnDic" style="@style/MonthButton" android:text="DIC" />
+            </GridLayout>
+
+            <!-- Tarjeta del calendario -->
+            <LinearLayout
+                android:id="@+id/cardCalendario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:background="@android:color/white"
+                android:padding="8dp"
+                android:elevation="2dp">
+
+                <TextView
+                    android:id="@+id/txtTituloMes"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="Enero"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:background="#007BA7"
+                    android:textSize="18sp" />
+
+                <!-- Grid dinámico de días -->
+                <GridLayout
+                    android:id="@+id/gridDias"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="7"
+                    android:useDefaultMargins="true"
+                    android:alignmentMode="alignMargins"
+                    android:padding="8dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
     <!-- Barra inferior -->
     <LinearLayout

@@ -29,24 +29,36 @@
             android:background="@android:color/white"
             android:padding="32dp">
 
-            <!-- Título -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <!-- Imagen (puedes cambiarla por una pastilla si quieres) -->
+                <TextView
+                    android:id="@+id/txtTituloAlarma"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="ALARMA"
+                    android:textColor="@android:color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtDescripcionAlarma"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="top"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="18sp"
+                    android:visibility="visible" />
+
+            </LinearLayout>
 
             <!-- Botones -->
-
-            <TextView
-                android:id="@+id/txtTituloAlarma"
-                android:layout_width="wrap_content"
-                android:layout_height="414dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="40dp"
-                android:gravity="center"
-                android:text="ALARMA"
-                android:textColor="@android:color/black"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

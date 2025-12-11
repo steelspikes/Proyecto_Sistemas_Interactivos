@@ -19,6 +19,17 @@
             android:textColor="@color/colorTexto"
             android:textColorHint="@color/colorBordeBoton" />
 
+        <EditText
+            android:id="@+id/edtDescripcionRecordatorio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_edittext"
+            android:hint="Descripción (opcional)"
+            android:padding="8dp"
+            android:textColor="@color/colorTexto"
+            android:textColorHint="@color/colorBordeBoton" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

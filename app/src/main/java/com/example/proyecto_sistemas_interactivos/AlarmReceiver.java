@@ -21,6 +21,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         // Leer datos que mandó HomeActivity.programarAlarma(...)
         String titulo = intent.getStringExtra(AlertActivity.EXTRA_TITULO);
+        String descripcion = intent.getStringExtra(AlertActivity.EXTRA_DESCRIPCION);
         long id       = intent.getLongExtra(AlertActivity.EXTRA_ID, -1);
 
         if (titulo == null || titulo.trim().isEmpty()) {
@@ -33,6 +34,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         // Intent para la pantalla de alerta
         Intent fullScreenIntent = new Intent(context, AlertActivity.class);
         fullScreenIntent.putExtra(AlertActivity.EXTRA_TITULO, titulo);
+        fullScreenIntent.putExtra(AlertActivity.EXTRA_DESCRIPCION, descripcion);
         fullScreenIntent.putExtra(AlertActivity.EXTRA_ID, id);
         fullScreenIntent.setFlags(
                 Intent.FLAG_ACTIVITY_NEW_TASK
@@ -62,7 +64,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             nm.createNotificationChannel(channel);
         }
 
-        Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground) // o tu ícono
                 .setContentTitle("Recordatorio")
                 .setContentText(titulo)
@@ -70,8 +72,13 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
                 .setAutoCancel(true)
                 .setContentIntent(fullScreenPendingIntent)
-                .setFullScreenIntent(fullScreenIntent != null ? fullScreenPendingIntent : null, true)
-                .build();
+                .setFullScreenIntent(fullScreenIntent != null ? fullScreenPendingIntent : null, true);
+
+        if (descripcion != null && !descripcion.isEmpty()) {
+            builder.setStyle(new NotificationCompat.BigTextStyle().bigText(descripcion));
+        }
+
+        Notification notification = builder.build();
 
         nm.notify((int) System.currentTimeMillis(), notification);
 

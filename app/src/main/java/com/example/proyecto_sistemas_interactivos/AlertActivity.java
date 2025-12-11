@@ -1,6 +1,7 @@
 package com.example.proyecto_sistemas_interactivos;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -15,10 +16,12 @@ public class AlertActivity extends AppCompatActivity {
 
     // Constantes de los extras que usaremos en TODA la app
     public static final String EXTRA_TITULO = "TITULO_RECORDATORIO";
+    public static final String EXTRA_DESCRIPCION = "DESCRIPCION_RECORDATORIO";
     public static final String EXTRA_ID     = "ID_RECORDATORIO";
 
     private long idRecordatorio;
     private String tituloRecordatorio;
+    private String descripcionRecordatorio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +44,13 @@ public class AlertActivity extends AppCompatActivity {
 
 
         TextView txtTitulo = findViewById(R.id.txtTituloAlarma);
+        TextView txtDescripcion = findViewById(R.id.txtDescripcionAlarma);
         Button btnDetener  = findViewById(R.id.btnDetener);
         Button btnMas5     = findViewById(R.id.btnMas5);
 
         // Leer datos que mandó el AlarmReceiver
         tituloRecordatorio = getIntent().getStringExtra(EXTRA_TITULO);
+        descripcionRecordatorio = getIntent().getStringExtra(EXTRA_DESCRIPCION);
         idRecordatorio     = getIntent().getLongExtra(EXTRA_ID, -1);
 
         if (tituloRecordatorio == null || tituloRecordatorio.trim().isEmpty()) {
@@ -55,6 +60,13 @@ public class AlertActivity extends AppCompatActivity {
         String tituloPantalla =
                 "HORA DE " + tituloRecordatorio.toUpperCase(Locale.getDefault());
         txtTitulo.setText(tituloPantalla);
+
+        if (descripcionRecordatorio != null && !descripcionRecordatorio.isEmpty()) {
+            txtDescripcion.setText(descripcionRecordatorio);
+            txtDescripcion.setVisibility(View.VISIBLE);
+        } else {
+            txtDescripcion.setVisibility(View.GONE);
+        }
 
         // Botón DETENER -> marcar completado y cerrar
         btnDetener.setOnClickListener(v -> {
