@@ -2,6 +2,7 @@ package com.example.proyecto_sistemas_interactivos;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
@@ -13,6 +14,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -48,6 +50,7 @@ public class HomeActivity extends AppCompatActivity {
     private TextView btnCalendarFooter;
     private LinearLayout contenedorRecordatorios;
     private TextView txtSinRecordatorios;
+    private TextView profileIcon;
 
     // Días de la semana
     private TextView txtDiaDomingo, txtDiaLunes, txtDiaMartes,
@@ -90,6 +93,7 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         // Referencias UI
+        profileIcon              = findViewById(R.id.profileIcon);
         btnAgregarRecordatorio   = findViewById(R.id.btnAgregarRecordatorio);
         btnAddReminderFooter     = findViewById(R.id.btnAddReminderFooter);
         btnCalendarFooter        = findViewById(R.id.btnCalendarFooter);
@@ -123,8 +127,26 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(i);
         });
 
+        profileIcon.setOnClickListener(this::showProfileMenu);
+
         // Pintar los recordatorios del día seleccionado (hoy)
         actualizarListaRecordatorios();
+    }
+
+    private void showProfileMenu(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        popup.getMenuInflater().inflate(R.menu.menu_profile, popup.getMenu());
+        popup.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_logout) {
+                // Redirigir a MainActivity
+                Intent intent = new Intent(HomeActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                return true;
+            }
+            return false;
+        });
+        popup.show();
     }
 
     // ---------------------------------------------------------------------
