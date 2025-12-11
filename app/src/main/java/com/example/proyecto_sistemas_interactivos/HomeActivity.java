@@ -108,7 +108,7 @@ public class HomeActivity extends AppCompatActivity {
         listaRecordatorios = cargarRecordatorios(this);
 
         // Marcar el día actual en los círculos
-        marcarDiaActual();
+        actualizarVistasDias();
 
         // Click en cada día de la semana -> cambiar fecha seleccionada
         configurarClicksDiasSemana();
@@ -175,22 +175,32 @@ public class HomeActivity extends AppCompatActivity {
     // ---------------------------------------------------------------------
     //  DÍAS DE LA SEMANA
     // ---------------------------------------------------------------------
-    private void marcarDiaActual() {
+    private void actualizarVistasDias() {
         TextView[] dias = new TextView[]{
                 txtDiaDomingo, txtDiaLunes, txtDiaMartes, txtDiaMiercoles,
                 txtDiaJueves, txtDiaViernes, txtDiaSabado
         };
 
-        // Todo en verde
+        // 1. Resetear todos los días
         for (TextView tv : dias) {
             tv.setBackgroundResource(R.drawable.circle_day);
         }
 
+        // 2. Marcar día seleccionado
+        int diaSemanaSeleccionado = fechaSeleccionada.get(Calendar.DAY_OF_WEEK);
+        int indexSeleccionado = diaSemanaSeleccionado - 1;
+        if (indexSeleccionado >= 0 && indexSeleccionado < dias.length) {
+            dias[indexSeleccionado].setBackgroundResource(R.drawable.circle_day_selected);
+        }
+
+        // 3. Marcar HOY (si es diferente al seleccionado)
         Calendar hoy = Calendar.getInstance();
-        int diaSemana = hoy.get(Calendar.DAY_OF_WEEK); // Domingo = 1 ... Sábado = 7
-        int index = diaSemana - 1;
-        if (index >= 0 && index < dias.length) {
-            dias[index].setBackgroundResource(R.drawable.circle_day_hoy);
+        if (!esMismoDia(hoy.getTimeInMillis(), fechaSeleccionada.getTimeInMillis())) {
+            int diaHoy = hoy.get(Calendar.DAY_OF_WEEK);
+            int indexHoy = diaHoy - 1;
+            if (indexHoy >= 0 && indexHoy < dias.length) {
+                dias[indexHoy].setBackgroundResource(R.drawable.circle_day_hoy);
+            }
         }
     }
 
@@ -211,8 +221,8 @@ public class HomeActivity extends AppCompatActivity {
         fechaSeleccionada.setTimeInMillis(hoy.getTimeInMillis());
         fechaSeleccionada.add(Calendar.DAY_OF_MONTH, dif);
 
-        // Actualiza los círculos (solo cambia colores, el de hoy sigue rosa)
-        marcarDiaActual();
+        // Actualiza los círculos
+        actualizarVistasDias();
 
         // Refresca lista para ese día
         actualizarListaRecordatorios();

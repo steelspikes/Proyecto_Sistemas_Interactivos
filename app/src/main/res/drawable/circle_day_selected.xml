@@ -6,5 +6,5 @@
         android:width="40dp"
         android:height="40dp" />
 
-    <solid android:color="#FFB6C1" /> <!-- Rosita -->
+    <solid android:color="@color/colorAccent" />
 </shape>

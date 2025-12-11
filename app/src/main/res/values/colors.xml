@@ -13,4 +13,5 @@
     <color name="colorBordeBoton">#FFCCCCCC</color>
     <color name="colorTexto">#FF333333</color>
     <color name="colorMesSeleccionado">#007EA5</color>
+    <color name="colorAccent">#FFC107</color>
 </resources>
