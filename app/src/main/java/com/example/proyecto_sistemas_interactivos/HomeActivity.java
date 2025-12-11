@@ -133,12 +133,16 @@ public class HomeActivity extends AppCompatActivity {
     public static class Recordatorio {
         long id;                // identificador único
         String titulo;
+        String descripcion;
+        String emoji;
         long fechaHoraMillis;
         boolean completado;
 
-        public Recordatorio(long id, String titulo, long fechaHoraMillis, boolean completado) {
+        public Recordatorio(long id, String titulo, String descripcion, String emoji, long fechaHoraMillis, boolean completado) {
             this.id = id;
             this.titulo = titulo;
+            this.descripcion = descripcion;
+            this.emoji = emoji;
             this.fechaHoraMillis = fechaHoraMillis;
             this.completado = completado;
         }
@@ -228,7 +232,9 @@ public class HomeActivity extends AppCompatActivity {
         View view = inflater.inflate(R.layout.dialog_nuevo_recordatorio, null);
         builder.setView(view);
 
+        EditText edtEmoji = view.findViewById(R.id.edtEmoji);
         EditText edtTitulo = view.findViewById(R.id.edtTituloRecordatorio);
+        EditText edtDescripcion = view.findViewById(R.id.edtDescripcionRecordatorio);
         TextView txtFechaSel = view.findViewById(R.id.txtFechaSeleccionada);
         TextView txtHoraSel = view.findViewById(R.id.txtHoraSeleccionada);
         Button btnElegirFecha = view.findViewById(R.id.btnElegirFecha);
@@ -279,7 +285,10 @@ public class HomeActivity extends AppCompatActivity {
         dialog.setOnShowListener(dlg -> {
             Button btnPositivo = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             btnPositivo.setOnClickListener(v -> {
+                String emoji = edtEmoji.getText().toString().trim();
                 String titulo = edtTitulo.getText().toString().trim();
+                String descripcion = edtDescripcion.getText().toString().trim();
+
                 if (titulo.isEmpty()) {
                     edtTitulo.setError("Escribe el nombre de la actividad");
                     return;
@@ -290,6 +299,8 @@ public class HomeActivity extends AppCompatActivity {
                 Recordatorio r = new Recordatorio(
                         id,
                         titulo,
+                        descripcion,
+                        emoji,
                         fechaHoraSeleccionada.getTimeInMillis(),
                         false
                 );
@@ -344,11 +355,27 @@ public class HomeActivity extends AppCompatActivity {
 
                 View card = inflater.inflate(R.layout.item_recordatorio, contenedorRecordatorios, false);
 
+                TextView txtEmoji = card.findViewById(R.id.txtEmoji);
                 TextView txtTitulo = card.findViewById(R.id.txtTituloRecordatorio);
+                TextView txtDescripcion = card.findViewById(R.id.txtDescripcionRecordatorio);
                 TextView txtHora   = card.findViewById(R.id.txtHoraRecordatorio);
+
+                if (r.emoji != null && !r.emoji.isEmpty()) {
+                    txtEmoji.setText(r.emoji);
+                    txtEmoji.setVisibility(View.VISIBLE);
+                } else {
+                    txtEmoji.setVisibility(View.GONE);
+                }
 
                 txtTitulo.setText(r.titulo);
                 txtHora.setText(formatoHora.format(r.fechaHoraMillis));
+
+                if (r.descripcion != null && !r.descripcion.isEmpty()) {
+                    txtDescripcion.setText(r.descripcion);
+                    txtDescripcion.setVisibility(View.VISIBLE);
+                } else {
+                    txtDescripcion.setVisibility(View.GONE);
+                }
 
                 // Si está completado, se "apaga" un poco
                 if (r.completado) {
@@ -450,6 +477,8 @@ public class HomeActivity extends AppCompatActivity {
 
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra(AlertActivity.EXTRA_TITULO, r.titulo);
+        intent.putExtra(AlertActivity.EXTRA_DESCRIPCION, r.descripcion);
+        intent.putExtra(AlertActivity.EXTRA_EMOJI, r.emoji);
         intent.putExtra(AlertActivity.EXTRA_ID, r.id);
 
         int requestCode = (int) (r.id % Integer.MAX_VALUE);

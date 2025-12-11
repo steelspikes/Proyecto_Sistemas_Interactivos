@@ -17,11 +17,13 @@ public class AlertActivity extends AppCompatActivity {
     // Constantes de los extras que usaremos en TODA la app
     public static final String EXTRA_TITULO = "TITULO_RECORDATORIO";
     public static final String EXTRA_DESCRIPCION = "DESCRIPCION_RECORDATORIO";
+    public static final String EXTRA_EMOJI = "EMOJI_RECORDATORIO";
     public static final String EXTRA_ID     = "ID_RECORDATORIO";
 
     private long idRecordatorio;
     private String tituloRecordatorio;
     private String descripcionRecordatorio;
+    private String emojiRecordatorio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class AlertActivity extends AppCompatActivity {
         }
 
 
+        TextView txtEmoji = findViewById(R.id.txtEmojiAlarma);
         TextView txtTitulo = findViewById(R.id.txtTituloAlarma);
         TextView txtDescripcion = findViewById(R.id.txtDescripcionAlarma);
         Button btnDetener  = findViewById(R.id.btnDetener);
@@ -51,10 +54,18 @@ public class AlertActivity extends AppCompatActivity {
         // Leer datos que mandó el AlarmReceiver
         tituloRecordatorio = getIntent().getStringExtra(EXTRA_TITULO);
         descripcionRecordatorio = getIntent().getStringExtra(EXTRA_DESCRIPCION);
+        emojiRecordatorio = getIntent().getStringExtra(EXTRA_EMOJI);
         idRecordatorio     = getIntent().getLongExtra(EXTRA_ID, -1);
 
         if (tituloRecordatorio == null || tituloRecordatorio.trim().isEmpty()) {
             tituloRecordatorio = "ALARMA";
+        }
+
+        if (emojiRecordatorio != null && !emojiRecordatorio.isEmpty()) {
+            txtEmoji.setText(emojiRecordatorio);
+            txtEmoji.setVisibility(View.VISIBLE);
+        } else {
+            txtEmoji.setVisibility(View.GONE);
         }
 
         String tituloPantalla =
