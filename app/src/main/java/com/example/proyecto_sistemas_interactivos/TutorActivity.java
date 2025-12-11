@@ -69,6 +69,15 @@ public class TutorActivity extends AppCompatActivity {
         setupReminders();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refrescar el calendario y los recordatorios
+        dibujarCalendario();
+        Calendar hoy = Calendar.getInstance();
+        showRemindersForDay(hoy.get(Calendar.DAY_OF_MONTH));
+    }
+
     private void showProfileMenu(View v) {
         PopupMenu popup = new PopupMenu(this, v);
         popup.getMenuInflater().inflate(R.menu.menu_profile, popup.getMenu());
