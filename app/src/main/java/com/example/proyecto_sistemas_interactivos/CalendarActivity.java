@@ -8,6 +8,7 @@ import android.widget.GridLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -19,6 +20,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     private TextView txtTituloMes;
     private GridLayout gridDias;
+    private TextView profileIcon;
 
     private int anioActual;
     private int mesSeleccionado; // 0 = Ene ... 11 = Dic
@@ -27,6 +29,9 @@ public class CalendarActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+
+        profileIcon = findViewById(R.id.profileIconCalendar);
+        profileIcon.setOnClickListener(this::showProfileMenu);
 
         // Botón casa -> vuelve al Home
         findViewById(R.id.btnHomeCalendar).setOnClickListener(v -> {
@@ -57,6 +62,22 @@ public class CalendarActivity extends AppCompatActivity {
 
         configurarListenersMeses();
         seleccionarMes(mesSeleccionado); // mes actual
+    }
+
+    private void showProfileMenu(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        popup.getMenuInflater().inflate(R.menu.menu_profile, popup.getMenu());
+        popup.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_logout) {
+                // Redirigir a MainActivity
+                Intent intent = new Intent(CalendarActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                return true;
+            }
+            return false;
+        });
+        popup.show();
     }
 
     private void configurarListenersMeses() {

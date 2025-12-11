@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.appcompat.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class TutorActivity extends AppCompatActivity {
+
+    private TextView profileIcon;
 
     // --- Vistas de Dependientes ---
     private RecyclerView dependentsRecyclerView;
@@ -53,6 +56,9 @@ public class TutorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutor);
 
+        profileIcon = findViewById(R.id.profileIcon);
+        profileIcon.setOnClickListener(this::showProfileMenu);
+
         // --- Configuración de Dependientes ---
         setupDependents();
 
@@ -61,6 +67,22 @@ public class TutorActivity extends AppCompatActivity {
 
         // --- Configuración de Recordatorios ---
         setupReminders();
+    }
+
+    private void showProfileMenu(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        popup.getMenuInflater().inflate(R.menu.menu_profile, popup.getMenu());
+        popup.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_logout) {
+                // Redirigir a MainActivity
+                Intent intent = new Intent(TutorActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                return true;
+            }
+            return false;
+        });
+        popup.show();
     }
 
     private void setupDependents() {
@@ -359,4 +381,3 @@ public class TutorActivity extends AppCompatActivity {
         }
     }
 }
-
