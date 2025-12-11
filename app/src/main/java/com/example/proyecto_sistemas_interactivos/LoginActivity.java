@@ -12,7 +12,7 @@ import android.widget.Toast;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText edtCorreoLogin, edtContrasenaLogin;
-    private Button btnIniciarSesionLogin, btnIrARegistro, btnIniciarSesionTutor;
+    private Button btnIniciarSesionLogin, btnIrARegistro;
 
     // Constantes de prefs de usuario
     private static final String PREFS_USER = "user_prefs";
@@ -40,7 +40,6 @@ public class LoginActivity extends AppCompatActivity {
         edtContrasenaLogin = findViewById(R.id.edtContrasenaLogin);
         btnIniciarSesionLogin = findViewById(R.id.btnIniciarSesionLogin);
         btnIrARegistro = findViewById(R.id.btnIrARegistro);
-        btnIniciarSesionTutor = findViewById(R.id.btnIniciarSesionTutor);
 
         btnIniciarSesionLogin.setOnClickListener(v -> {
             String email = edtCorreoLogin.getText().toString().trim();
@@ -59,7 +58,10 @@ public class LoginActivity extends AppCompatActivity {
             String savedPassword = prefs.getString(KEY_PASSWORD, null);
 
             if (savedEmail == null || savedPassword == null) {
-                Toast.makeText(this, "Primero debes crear una cuenta", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "No existe una cuenta. Por favor, regístrate.", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
                 return;
             }
 
@@ -76,11 +78,7 @@ public class LoginActivity extends AppCompatActivity {
         btnIrARegistro.setOnClickListener(v -> {
             Intent i = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(i);
-        });
-
-        btnIniciarSesionTutor.setOnClickListener(v -> {
-            Intent i = new Intent(LoginActivity.this, TutorActivity.class);
-            startActivity(i);
+            finish();
         });
     }
 }
