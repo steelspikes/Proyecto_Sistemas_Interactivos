@@ -12,8 +12,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.proyecto_sistemas_interactivos.HomeActivity.Recordatorio;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -23,7 +27,7 @@ public class TutorActivity extends AppCompatActivity {
 
     // --- Vistas de Dependientes ---
     private RecyclerView dependentsRecyclerView;
-    private DependentAdapter adapter;
+    private DependentAdapter dependentAdapter;
     private List<Dependent> dependentList;
     private Button btnAddDependent;
 
@@ -32,6 +36,13 @@ public class TutorActivity extends AppCompatActivity {
             btnJul, btnAgo, btnSep, btnOct, btnNov, btnDic;
     private TextView txtTituloMes;
     private GridLayout gridDias;
+
+    // --- Vistas de Recordatorios ---
+    private RecyclerView remindersRecyclerView;
+    private ReminderAdapter reminderAdapter;
+    private List<Recordatorio> reminderList;
+    private TextView remindersTitle;
+
 
     // --- Estado del Calendario ---
     private int anioActual;
@@ -47,6 +58,9 @@ public class TutorActivity extends AppCompatActivity {
 
         // --- Configuración del Calendario ---
         setupCalendar();
+
+        // --- Configuración de Recordatorios ---
+        setupReminders();
     }
 
     private void setupDependents() {
@@ -56,11 +70,11 @@ public class TutorActivity extends AppCompatActivity {
         dependentList = new ArrayList<>();
         dependentList.add(new Dependent("Juan Pérez", R.drawable.maestra));
 
-        adapter = new DependentAdapter(dependentList, dependent -> {
+        dependentAdapter = new DependentAdapter(dependentList, dependent -> {
             Intent intent = new Intent(TutorActivity.this, HomeActivity.class);
             startActivity(intent);
         });
-        dependentsRecyclerView.setAdapter(adapter);
+        dependentsRecyclerView.setAdapter(dependentAdapter);
 
         btnAddDependent.setOnClickListener(v -> {
             Intent intent = new Intent(TutorActivity.this, AddDependentActivity.class);
@@ -91,6 +105,15 @@ public class TutorActivity extends AppCompatActivity {
 
         configurarListenersMeses();
         seleccionarMes(mesSeleccionado); // mes actual
+    }
+
+    private void setupReminders(){
+        remindersTitle = findViewById(R.id.remindersTitle);
+        remindersRecyclerView = findViewById(R.id.remindersRecyclerView);
+        remindersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        reminderList = new ArrayList<>();
+        reminderAdapter = new ReminderAdapter(reminderList);
+        remindersRecyclerView.setAdapter(reminderAdapter);
     }
 
     // ---------------------------------------------------------------------
@@ -133,7 +156,8 @@ public class TutorActivity extends AppCompatActivity {
         resetearMeses();
         Button[] monthButtons = {btnEne, btnFeb, btnMar, btnAbr, btnMay, btnJun, btnJul, btnAgo, btnSep, btnOct, btnNov, btnDic};
         if (mes >= 0 && mes < monthButtons.length) {
-            monthButtons[mes].setBackgroundResource(R.drawable.circle_day_selected);
+            // El circulo de seleccion no esta implementado
+            //monthButtons[mes].setBackgroundResource(R.drawable.circle_day_selected);
         }
 
         String[] nombresMes = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -146,7 +170,7 @@ public class TutorActivity extends AppCompatActivity {
     private void resetearMeses() {
         Button[] monthButtons = {btnEne, btnFeb, btnMar, btnAbr, btnMay, btnJun, btnJul, btnAgo, btnSep, btnOct, btnNov, btnDic};
         for (Button btn : monthButtons) {
-            btn.setBackgroundResource(R.drawable.circle_day);
+            //btn.setBackgroundResource(R.drawable.circle_day);
         }
     }
 
@@ -162,6 +186,21 @@ public class TutorActivity extends AppCompatActivity {
         int primerDiaSemana = cal.get(Calendar.DAY_OF_WEEK);
         int offset = primerDiaSemana - Calendar.SUNDAY;
         int diasEnMes = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        // Add day labels
+        String[] dayLabels = {"D", "L", "M", "M", "J", "V", "S"};
+        for (String label : dayLabels) {
+            TextView tv = new TextView(this);
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.width = 0;
+            params.height = GridLayout.LayoutParams.WRAP_CONTENT;
+            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+            tv.setLayoutParams(params);
+            tv.setGravity(android.view.Gravity.CENTER);
+            tv.setText(label);
+            tv.setTextSize(14f);
+            gridDias.addView(tv);
+        }
 
         for (int i = 0; i < 42; i++) {
             TextView tv = new TextView(this);
@@ -183,14 +222,27 @@ public class TutorActivity extends AppCompatActivity {
                 } else {
                     tv.setBackgroundResource(R.drawable.cell_day_inactive);
                 }
+                final int finalDia = diaNumero;
+                tv.setOnClickListener(v -> showRemindersForDay(finalDia));
             } else {
                 tv.setText("");
                 tv.setBackgroundResource(R.drawable.cell_day_inactive);
+                tv.setOnClickListener(null);
             }
             gridDias.addView(tv);
         }
     }
 
+    private void showRemindersForDay(int day) {
+        remindersTitle.setVisibility(View.VISIBLE);
+        remindersRecyclerView.setVisibility(View.VISIBLE);
+
+        List<Recordatorio> dailyReminders = HomeActivity.getRemindersForDate(this, anioActual, mesSeleccionado, day);
+
+        reminderList.clear();
+        reminderList.addAll(dailyReminders);
+        reminderAdapter.notifyDataSetChanged();
+    }
 
     // ---------------------------------------------------------------------
     //  MODELO Y ADAPTADOR DE DEPENDIENTES
@@ -253,4 +305,49 @@ public class TutorActivity extends AppCompatActivity {
             }
         }
     }
+
+
+    // ---------------------------------------------------------------------
+    //  MODELO Y ADAPTADOR DE RECORDATORIOS
+    // ---------------------------------------------------------------------
+
+    public static class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHolder> {
+        private List<Recordatorio> reminders;
+        private final SimpleDateFormat formatHora = new SimpleDateFormat("h:mm a", Locale.getDefault());
+
+        public ReminderAdapter(List<Recordatorio> reminders) {
+            this.reminders = reminders;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_reminder, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            Recordatorio reminder = reminders.get(position);
+            holder.reminderTitle.setText(reminder.titulo);
+            holder.reminderTime.setText(formatHora.format(reminder.fechaHoraMillis));
+        }
+
+        @Override
+        public int getItemCount() {
+            return reminders.size();
+        }
+
+        public static class ViewHolder extends RecyclerView.ViewHolder {
+            TextView reminderTitle;
+            TextView reminderTime;
+
+            public ViewHolder(@NonNull View itemView) {
+                super(itemView);
+                reminderTitle = itemView.findViewById(R.id.reminderTitle);
+                reminderTime = itemView.findViewById(R.id.reminderTime);
+            }
+        }
+    }
 }
+

@@ -154,6 +154,28 @@
 
             </LinearLayout>
 
+            <!-- Recordatorios del día -->
+            <TextView
+                android:id="@+id/remindersTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recordatorios del Día"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorTexto"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/remindersRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_reminder"
+                android:visibility="gone"/>
+
         </LinearLayout>
     </ScrollView>
 

@@ -63,9 +63,9 @@ public class HomeActivity extends AppCompatActivity {
     private List<Recordatorio> listaRecordatorios = new ArrayList<>();
 
     // Formatos
-    private final SimpleDateFormat formatoFecha =
+    public final SimpleDateFormat formatoFecha =
             new SimpleDateFormat("EEE, d 'de' MMM", Locale.getDefault());
-    private final SimpleDateFormat formatoHora =
+    public final SimpleDateFormat formatoHora =
             new SimpleDateFormat("h:mm a", Locale.getDefault());
 
     @Override
@@ -153,12 +153,12 @@ public class HomeActivity extends AppCompatActivity {
     //  MODELO
     // ---------------------------------------------------------------------
     public static class Recordatorio {
-        long id;                // identificador único
-        String titulo;
-        String descripcion;
-        String emoji;
-        long fechaHoraMillis;
-        boolean completado;
+        public long id;                // identificador único
+        public String titulo;
+        public String descripcion;
+        public String emoji;
+        public long fechaHoraMillis;
+        public boolean completado;
 
         public Recordatorio(long id, String titulo, String descripcion, String emoji, long fechaHoraMillis, boolean completado) {
             this.id = id;
@@ -173,7 +173,7 @@ public class HomeActivity extends AppCompatActivity {
     // ---------------------------------------------------------------------
     //  UTILIDADES DE PREFERENCIAS
     // ---------------------------------------------------------------------
-    private static List<Recordatorio> cargarRecordatorios(Context context) {
+    public static List<Recordatorio> cargarRecordatorios(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(
                 PREFS_RECORDATORIOS, Context.MODE_PRIVATE);
         String json = prefs.getString(KEY_LISTA, null);
@@ -453,6 +453,21 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    public static List<Recordatorio> getRemindersForDate(Context context, int year, int month, int day) {
+        List<Recordatorio> allReminders = cargarRecordatorios(context);
+        List<Recordatorio> remindersForDate = new ArrayList<>();
+        Calendar cal = Calendar.getInstance();
+        for (Recordatorio r : allReminders) {
+            cal.setTimeInMillis(r.fechaHoraMillis);
+            if (cal.get(Calendar.YEAR) == year &&
+                    cal.get(Calendar.MONTH) == month &&
+                    cal.get(Calendar.DAY_OF_MONTH) == day) {
+                remindersForDate.add(r);
+            }
+        }
+        return remindersForDate;
     }
 
     public static void marcarRecordatorioCompletado(Context context, long id) {
