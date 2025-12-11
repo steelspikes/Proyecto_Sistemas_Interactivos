@@ -22,6 +22,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         // Leer datos que mandó HomeActivity.programarAlarma(...)
         String titulo = intent.getStringExtra(AlertActivity.EXTRA_TITULO);
         String descripcion = intent.getStringExtra(AlertActivity.EXTRA_DESCRIPCION);
+        String emoji = intent.getStringExtra(AlertActivity.EXTRA_EMOJI);
         long id       = intent.getLongExtra(AlertActivity.EXTRA_ID, -1);
 
         if (titulo == null || titulo.trim().isEmpty()) {
@@ -35,6 +36,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Intent fullScreenIntent = new Intent(context, AlertActivity.class);
         fullScreenIntent.putExtra(AlertActivity.EXTRA_TITULO, titulo);
         fullScreenIntent.putExtra(AlertActivity.EXTRA_DESCRIPCION, descripcion);
+        fullScreenIntent.putExtra(AlertActivity.EXTRA_EMOJI, emoji);
         fullScreenIntent.putExtra(AlertActivity.EXTRA_ID, id);
         fullScreenIntent.setFlags(
                 Intent.FLAG_ACTIVITY_NEW_TASK
@@ -64,10 +66,12 @@ public class AlarmReceiver extends BroadcastReceiver {
             nm.createNotificationChannel(channel);
         }
 
+        String contentText = (emoji != null && !emoji.isEmpty() ? emoji + " " : "") + titulo;
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground) // o tu ícono
                 .setContentTitle("Recordatorio")
-                .setContentText(titulo)
+                .setContentText(contentText)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
                 .setAutoCancel(true)
