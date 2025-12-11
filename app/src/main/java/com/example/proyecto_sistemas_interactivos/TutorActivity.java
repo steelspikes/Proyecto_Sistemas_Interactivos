@@ -331,6 +331,13 @@ public class TutorActivity extends AppCompatActivity {
             Recordatorio reminder = reminders.get(position);
             holder.reminderTitle.setText(reminder.titulo);
             holder.reminderTime.setText(formatHora.format(reminder.fechaHoraMillis));
+
+            if (reminder.emoji != null && !reminder.emoji.isEmpty()) {
+                holder.reminderEmoji.setText(reminder.emoji);
+                holder.reminderEmoji.setVisibility(View.VISIBLE);
+            } else {
+                holder.reminderEmoji.setVisibility(View.GONE);
+            }
         }
 
         @Override
@@ -341,11 +348,13 @@ public class TutorActivity extends AppCompatActivity {
         public static class ViewHolder extends RecyclerView.ViewHolder {
             TextView reminderTitle;
             TextView reminderTime;
+            TextView reminderEmoji;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
                 reminderTitle = itemView.findViewById(R.id.reminderTitle);
                 reminderTime = itemView.findViewById(R.id.reminderTime);
+                reminderEmoji = itemView.findViewById(R.id.reminderEmoji);
             }
         }
     }

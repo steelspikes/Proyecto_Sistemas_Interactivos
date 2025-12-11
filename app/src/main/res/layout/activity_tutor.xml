@@ -165,7 +165,7 @@
                 android:textColor="@color/colorTexto"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="16dp"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/remindersRecyclerView"
@@ -174,7 +174,7 @@
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_reminder"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
 
         </LinearLayout>
     </ScrollView>
